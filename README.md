@@ -1,4 +1,4 @@
-# WeChat
+# WeiChat
 ####仿腾讯QQ的示例代码
 * 
 * 
