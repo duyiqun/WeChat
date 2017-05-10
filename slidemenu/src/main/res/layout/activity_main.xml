@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/bg"
     tools:context="com.qun.slidemenu.MainActivity">
 
-    <include></include>
+    <include layout="@layout/menu_layout"></include>
 
-    <include></include>
+    <include layout="@layout/main_layout"></include>
 
 </com.qun.slidemenu.SlideMenu>
