@@ -2,6 +2,7 @@ package com.qun.slidemenu;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.Arrays;
@@ -23,5 +24,7 @@ public class MainActivity extends AppCompatActivity {
         List<String> names = Arrays.asList(Cheeses.NAMES);
         MainAdapter mainAdapter = new MainAdapter(names);
         mLvMain.setAdapter(mainAdapter);
+
+        mLvMenu.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Cheeses.sCheeseStrings));
     }
 }
