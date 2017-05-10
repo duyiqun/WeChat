@@ -1,4 +1,4 @@
-package com.qun.wechat;
+package com.qun.weichat;
 
 import org.junit.Test;
 
