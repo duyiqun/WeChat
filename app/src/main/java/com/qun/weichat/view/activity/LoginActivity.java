@@ -1,6 +1,5 @@
 package com.qun.weichat.view.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.qun.weichat.R;
