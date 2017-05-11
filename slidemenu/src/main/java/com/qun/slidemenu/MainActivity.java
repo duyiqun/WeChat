@@ -2,7 +2,6 @@ package com.qun.slidemenu;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -32,14 +31,14 @@ public class MainActivity extends AppCompatActivity {
         MainAdapter mainAdapter = new MainAdapter(names);
         mLvMain.setAdapter(mainAdapter);
 
-        mLvMenu.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Cheeses.sCheeseStrings){
+        mLvMenu.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Cheeses.sCheeseStrings) {
 
             //通过复写getView方法，更改字体颜色
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                if(view instanceof TextView){
+                if (view instanceof TextView) {
                     TextView textView = (TextView) view;
                     textView.setTextColor(Color.WHITE);
                 }
