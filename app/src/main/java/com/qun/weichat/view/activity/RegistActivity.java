@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,20 +18,18 @@ import com.qun.weichat.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class LoginActivity extends BaseActivity implements TextView.OnEditorActionListener, View.OnClickListener {
+public class RegistActivity extends BaseActivity implements TextView.OnEditorActionListener, View.OnClickListener {
 
     @BindView(R.id.et_username)
     EditText mEtUsername;
-    @BindView(R.id.et_pwd)
-    EditText mEtPwd;
     @BindView(R.id.til_username)
     TextInputLayout mTilUsername;
+    @BindView(R.id.et_pwd)
+    EditText mEtPwd;
     @BindView(R.id.til_pwd)
     TextInputLayout mTilPwd;
-    @BindView(R.id.btn_login)
-    Button mBtnLogin;
-    @BindView(R.id.tv_newuser)
-    TextView mTvNewuser;
+    @BindView(R.id.btn_regist)
+    Button mBtnRegist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,30 +44,42 @@ public class LoginActivity extends BaseActivity implements TextView.OnEditorActi
 //            window.setNavigationBarColor(Color.TRANSPARENT);
         }
 
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_regist);
         ButterKnife.bind(this);
 
         mEtPwd.setOnEditorActionListener(this);
-        mBtnLogin.setOnClickListener(this);
-        mTvNewuser.setOnClickListener(this);
+        mBtnRegist.setOnClickListener(this);
     }
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-
+        switch (v.getId()) {
+            case R.id.et_pwd:
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    regist();
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
         return false;
+    }
+
+    private void regist() {
+        /**
+         * 1. 获取用户名和密码
+         * 2. 校验用户名和密码，如果哪个不正确就把焦点移动到哪里
+         * 3. 注册（调用P层）
+         */
+        
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_login:
-
-                break;
-            case R.id.tv_newuser:
-                startActivity(RegistActivity.class, false);
-                break;
-            default:
+            case R.id.btn_regist:
+                regist();
                 break;
         }
     }
