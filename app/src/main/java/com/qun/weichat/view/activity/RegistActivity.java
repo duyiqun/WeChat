@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.qun.weichat.R;
 import com.qun.weichat.presenter.RegistPresenter;
 import com.qun.weichat.presenter.RegistPresenterImpl;
-import com.qun.weichat.utils.StringUtils;
 import com.qun.weichat.utils.ToastUtil;
 
 import butterknife.BindView;
@@ -81,37 +80,14 @@ public class RegistActivity extends BaseActivity implements TextView.OnEditorAct
          * 2. 校验用户名和密码，如果哪个不正确就把焦点移动到哪里
          * 3. 注册（调用P层）
          */
-        //字母开头，长度为[3,16]
-        String username = mEtUsername.getText().toString().trim();
-        //纯数字密码，长度[3,16]
-        String pwd = mEtPwd.getText().toString().trim();
-
-        if (!StringUtils.checkUsername(username)) {//用户名不合法
-            //显示错误信息
-            mTilUsername.setErrorEnabled(true);
-            mTilUsername.setError("用户名不合法");
-            //重新定位焦点
-            mEtUsername.requestFocus(View.FOCUS_RIGHT);
+        if (!checkUsernameAndPwd(mEtUsername, mEtPwd, mTilUsername, mTilPwd)) {
             return;
-        } else {
-            //校验合格，隐藏错误信息
-            mTilUsername.setErrorEnabled(false);
-        }
-
-        if (!StringUtils.checkPwd(pwd)) {//密码不合法
-            //显示错误信息
-            mTilPwd.setErrorEnabled(true);
-            mTilPwd.setError("密码不合法");
-            //重新定位焦点
-            mEtPwd.requestFocus(View.FOCUS_RIGHT);
-            return;
-        } else {
-            //校验合格，隐藏错误信息
-            mTilPwd.setErrorEnabled(false);
         }
 
         //显示进度条对话框
         showProgress("正在注册");
+        String username = mEtUsername.getText().toString().trim();
+        String pwd = mEtPwd.getText().toString().trim();
         //调用P层注册
         mRegistPresenter.regist(username, pwd);
     }

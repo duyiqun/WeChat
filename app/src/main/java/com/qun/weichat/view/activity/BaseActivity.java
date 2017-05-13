@@ -5,7 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.EditText;
+
+import com.qun.weichat.utils.StringUtils;
 
 /**
  * Created by Qun on 2017/5/11.
@@ -50,5 +55,37 @@ public class BaseActivity extends AppCompatActivity {
 
     public void hideProgress() {
         mProgressDialog.dismiss();
+    }
+
+    public boolean checkUsernameAndPwd(EditText mEtUsername, EditText mEtPwd, TextInputLayout mTilUsername, TextInputLayout mTilPwd) {
+        //字母开头，长度为[3,16]
+        String username = mEtUsername.getText().toString().trim();
+        //纯数字密码，长度[3,16]
+        String pwd = mEtPwd.getText().toString().trim();
+
+        if (!StringUtils.checkUsername(username)) {//用户名不合法
+            //显示错误信息
+            mTilUsername.setErrorEnabled(true);
+            mTilUsername.setError("用户名不合法");
+            //重新定位焦点
+            mEtUsername.requestFocus(View.FOCUS_RIGHT);
+            return false;
+        } else {
+            //校验合格，隐藏错误信息
+            mTilUsername.setErrorEnabled(false);
+        }
+
+        if (!StringUtils.checkPwd(pwd)) {//密码不合法
+            //显示错误信息
+            mTilPwd.setErrorEnabled(true);
+            mTilPwd.setError("密码不合法");
+            //重新定位焦点
+            mEtPwd.requestFocus(View.FOCUS_RIGHT);
+            return false;
+        } else {
+            //校验合格，隐藏错误信息
+            mTilPwd.setErrorEnabled(false);
+        }
+        return true;
     }
 }

@@ -64,7 +64,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".view.activity.LoginActivity">
+        <activity
+            android:name=".view.activity.LoginActivity"
+            android:launchMode="singleTask">
         </activity>
         <activity android:name=".view.activity.RegistActivity">
         </activity>
