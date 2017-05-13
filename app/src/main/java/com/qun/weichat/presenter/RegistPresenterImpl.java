@@ -5,6 +5,7 @@ import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SignUpCallback;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
+import com.qun.weichat.utils.ThreadUtils;
 import com.qun.weichat.view.activity.RegistView;
 
 /**
@@ -26,7 +27,7 @@ public class RegistPresenterImpl implements RegistPresenter {
      */
     @Override
     public void regist(final String username, final String pwd) {
-        AVUser user = new AVUser();// 新建 AVUser 对象实例
+        final AVUser user = new AVUser();// 新建 AVUser 对象实例
         user.setUsername(username);// 设置用户名
         user.setPassword(pwd);// 设置密码
         user.signUpInBackground(new SignUpCallback() {
@@ -34,12 +35,38 @@ public class RegistPresenterImpl implements RegistPresenter {
             public void done(AVException e) {
                 if (e == null) {
                     // 注册成功，再注册环信
-                    //注册失败会抛出HyphenateException
-                    try {
-                        EMClient.getInstance().createAccount(username, pwd);//同步方法
-                    } catch (HyphenateException e1) {
-                        e1.printStackTrace();
-                    }
+                    ThreadUtils.runOnSubThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //注册失败会抛出HyphenateException
+                            try {
+                                EMClient.getInstance().createAccount(username, pwd);//同步方法
+                                //成功,在主线程中回调View
+                                ThreadUtils.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mRegistView.onRegist(true, null, username, pwd);
+                                    }
+                                });
+                            } catch (final HyphenateException e1) {
+                                e1.printStackTrace();
+                                //环信失败
+                                //1). 将云数据库的数据删除
+                                try {
+                                    user.delete();
+                                } catch (AVException e2) {
+                                    e2.printStackTrace();
+                                }
+                                //2)告诉View注册删除
+                                ThreadUtils.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mRegistView.onRegist(false, e1.getMessage(), username, pwd);
+                                    }
+                                });
+                            }
+                        }
+                    });
                 } else {
                     // 失败的原因可能有多种，常见的是用户名已经存在。
                     // 将失败的原因告诉View
