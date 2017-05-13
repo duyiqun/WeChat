@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.avos.avoscloud.AVOSCloud;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 
@@ -23,6 +24,7 @@ public class WeiChatApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initEaseMob();
+        initAVOSCloud();
     }
 
     private void initEaseMob() {
@@ -67,5 +69,10 @@ public class WeiChatApplication extends Application {
             }
         }
         return processName;
+    }
+
+    private void initAVOSCloud() {
+        // 初始化参数依次为 this, AppId, AppKey
+        AVOSCloud.initialize(this,"wl0RzoKYQBVL7X4uBoHuJxI8-gzGzoHsz","wbs6MPcKfYIHz8etg9wPxHX9");
     }
 }

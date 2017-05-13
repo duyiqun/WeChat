@@ -14,11 +14,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.qun.weichat.R;
+import com.qun.weichat.presenter.RegistPresenter;
+import com.qun.weichat.presenter.RegistPresenterImpl;
+import com.qun.weichat.utils.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RegistActivity extends BaseActivity implements TextView.OnEditorActionListener, View.OnClickListener {
+public class RegistActivity extends BaseActivity implements TextView.OnEditorActionListener, View.OnClickListener, RegistView {
 
     @BindView(R.id.et_username)
     EditText mEtUsername;
@@ -30,6 +33,8 @@ public class RegistActivity extends BaseActivity implements TextView.OnEditorAct
     TextInputLayout mTilPwd;
     @BindView(R.id.btn_regist)
     Button mBtnRegist;
+
+    RegistPresenter mRegistPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,9 @@ public class RegistActivity extends BaseActivity implements TextView.OnEditorAct
 
         mEtPwd.setOnEditorActionListener(this);
         mBtnRegist.setOnClickListener(this);
+
+        //创建P层对象
+        mRegistPresenter = new RegistPresenterImpl(this);
     }
 
     @Override
@@ -72,7 +80,37 @@ public class RegistActivity extends BaseActivity implements TextView.OnEditorAct
          * 2. 校验用户名和密码，如果哪个不正确就把焦点移动到哪里
          * 3. 注册（调用P层）
          */
-        
+        //字母开头，长度为[3,16]
+        String username = mEtUsername.getText().toString().trim();
+        //纯数字密码，长度[3,16]
+        String pwd = mEtPwd.getText().toString().trim();
+
+        if (!StringUtils.checkUsername(username)) {//用户名不合法
+            //显示错误信息
+            mTilUsername.setErrorEnabled(true);
+            mTilUsername.setError("用户名不合法");
+            //重新定位焦点
+            mEtUsername.requestFocus(View.FOCUS_RIGHT);
+            return;
+        } else {
+            //校验合格，隐藏错误信息
+            mTilUsername.setErrorEnabled(false);
+        }
+
+        if (!StringUtils.checkPwd(pwd)) {//密码不合法
+            //显示错误信息
+            mTilPwd.setErrorEnabled(true);
+            mTilPwd.setError("密码不合法");
+            //重新定位焦点
+            mEtPwd.requestFocus(View.FOCUS_RIGHT);
+            return;
+        } else {
+            //校验合格，隐藏错误信息
+            mTilPwd.setErrorEnabled(false);
+        }
+
+        //调用P层注册
+        mRegistPresenter.regist(username, pwd);
     }
 
     @Override
