@@ -1,5 +1,10 @@
 package com.qun.weichat.presenter;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.SignUpCallback;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.qun.weichat.view.activity.RegistView;
 
 /**
@@ -14,8 +19,33 @@ public class RegistPresenterImpl implements RegistPresenter {
         mRegistView = registView;
     }
 
+    /**
+     * 1. 调用AVOSCloud的SDK，注册云数据库
+     * 2. 调用环信SDK，注册环信平台
+     * 3. 让结果返回给View
+     */
     @Override
-    public void regist(String username, String pwd) {
-        
+    public void regist(final String username, final String pwd) {
+        AVUser user = new AVUser();// 新建 AVUser 对象实例
+        user.setUsername(username);// 设置用户名
+        user.setPassword(pwd);// 设置密码
+        user.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(AVException e) {
+                if (e == null) {
+                    // 注册成功，再注册环信
+                    //注册失败会抛出HyphenateException
+                    try {
+                        EMClient.getInstance().createAccount(username, pwd);//同步方法
+                    } catch (HyphenateException e1) {
+                        e1.printStackTrace();
+                    }
+                } else {
+                    // 失败的原因可能有多种，常见的是用户名已经存在。
+                    // 将失败的原因告诉View
+                    mRegistView.onRegist(false, e.getMessage(), username, pwd);
+                }
+            }
+        });
     }
 }

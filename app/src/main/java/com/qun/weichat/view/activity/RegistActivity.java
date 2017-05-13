@@ -121,4 +121,9 @@ public class RegistActivity extends BaseActivity implements TextView.OnEditorAct
                 break;
         }
     }
+
+    @Override
+    public void onRegist(boolean b, String message, String username, String pwd) {
+
+    }
 }

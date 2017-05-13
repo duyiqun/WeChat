@@ -6,4 +6,5 @@ package com.qun.weichat.view.activity;
 
 public interface RegistView {
 
+    void onRegist(boolean b, String message, String username, String pwd);
 }
