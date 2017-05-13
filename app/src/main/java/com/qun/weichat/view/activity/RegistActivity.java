@@ -17,6 +17,7 @@ import com.qun.weichat.R;
 import com.qun.weichat.presenter.RegistPresenter;
 import com.qun.weichat.presenter.RegistPresenterImpl;
 import com.qun.weichat.utils.StringUtils;
+import com.qun.weichat.utils.ToastUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -109,6 +110,8 @@ public class RegistActivity extends BaseActivity implements TextView.OnEditorAct
             mTilPwd.setErrorEnabled(false);
         }
 
+        //显示进度条对话框
+        showProgress("正在注册");
         //调用P层注册
         mRegistPresenter.regist(username, pwd);
     }
@@ -123,7 +126,15 @@ public class RegistActivity extends BaseActivity implements TextView.OnEditorAct
     }
 
     @Override
-    public void onRegist(boolean b, String message, String username, String pwd) {
-
+    public void onRegist(boolean isSuccess, String message, String username, String pwd) {
+        hideProgress();
+        if (isSuccess) {
+            //1).保存username和pwd到sp
+            //2).跳转都LoginActivity
+            saveUser(username, pwd);
+            startActivity(LoginActivity.class, true);
+        } else {//失败
+            ToastUtil.showMsg(this, message);
+        }
     }
 }

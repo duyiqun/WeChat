@@ -51,13 +51,13 @@ public class RegistPresenterImpl implements RegistPresenter {
                             } catch (final HyphenateException e1) {
                                 e1.printStackTrace();
                                 //环信失败
-                                //1). 将云数据库的数据删除
+                                //1).将云数据库的数据删除
                                 try {
                                     user.delete();
                                 } catch (AVException e2) {
                                     e2.printStackTrace();
                                 }
-                                //2)告诉View注册删除
+                                //2).告诉View注册删除
                                 ThreadUtils.runOnMainThread(new Runnable() {
                                     @Override
                                     public void run() {
