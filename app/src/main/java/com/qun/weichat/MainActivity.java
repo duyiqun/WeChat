@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.qun.weichat.view.activity.BaseActivity;
+import com.qun.weichat.view.fragment.ConversationFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,7 +28,7 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
     @BindView(R.id.tab)
     PageBottomTabLayout mTab;
     private NavigationController mNavigationController;
-    private static final String[] TITLES = {"消息","联系人","动态"};
+    private static final String[] TITLES = {"消息", "联系人", "动态"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,25 +43,29 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
         mToolBar.setTitle("");
         setSupportActionBar(mToolBar);
         initTab();
+        mTvTitle.setText(TITLES[0]);
+        initFragment();
     }
 
     private void initTab() {
-        mNavigationController = mTab.material()
-                .addItem(R.mipmap.conversation_selected_2, TITLES[0])
-                .addItem(R.mipmap.contact_selected_2, TITLES[1])
-                .addItem(R.mipmap.plugin_selected_2, TITLES[2]).build();
+        mNavigationController = mTab.material().addItem(R.mipmap.conversation_selected_2, TITLES[0]).addItem(R.mipmap.contact_selected_2, TITLES[1]).addItem(R.mipmap.plugin_selected_2, TITLES[2]).build();
 
         mNavigationController.addTabItemSelectedListener(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu,menu);
-        if (menu instanceof MenuBuilder){
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        if (menu instanceof MenuBuilder) {
             MenuBuilder menuBuilder = (MenuBuilder) menu;
             menuBuilder.setOptionalIconsVisible(true);
         }
         return true;
+    }
+
+    private void initFragment() {
+        ConversationFragment conversationFragment = new ConversationFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.fl_content, conversationFragment, "0").commit();
     }
 
     @Override
