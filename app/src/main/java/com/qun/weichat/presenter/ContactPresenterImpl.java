@@ -2,6 +2,7 @@ package com.qun.weichat.presenter;
 
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
+import com.qun.weichat.db.DBUtils;
 import com.qun.weichat.utils.ThreadUtils;
 import com.qun.weichat.view.fragment.ContactView;
 
@@ -28,11 +29,15 @@ public class ContactPresenterImpl implements ContactPresenter {
      */
     @Override
     public void initContacts() {
+        final String currentUser = EMClient.getInstance().getCurrentUser();
+        List<String> contacts = DBUtils.getContacts(currentUser);
+
         ThreadUtils.runOnSubThread(new Runnable() {
             @Override
             public void run() {
                 try {
                     List<String> usernames = EMClient.getInstance().contactManager().getAllContactsFromServer();
+
                 } catch (HyphenateException e) {
                     e.printStackTrace();
                 }

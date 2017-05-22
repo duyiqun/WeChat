@@ -8,6 +8,7 @@ import android.util.Log;
 import com.avos.avoscloud.AVOSCloud;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
+import com.qun.weichat.db.DBUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +26,11 @@ public class WeiChatApplication extends Application {
         super.onCreate();
         initEaseMob();
         initAVOSCloud();
+        initDB();
+    }
+
+    private void initDB() {
+        DBUtils.init(this);
     }
 
     private void initEaseMob() {
