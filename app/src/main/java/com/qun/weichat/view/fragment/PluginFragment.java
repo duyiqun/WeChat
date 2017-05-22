@@ -12,7 +12,7 @@ import com.qun.weichat.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PluginFragment extends Fragment {
+public class PluginFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

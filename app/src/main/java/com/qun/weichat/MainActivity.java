@@ -1,13 +1,16 @@
 package com.qun.weichat;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.qun.weichat.factory.FragmentFactory;
 import com.qun.weichat.view.activity.BaseActivity;
+import com.qun.weichat.view.fragment.BaseFragment;
 import com.qun.weichat.view.fragment.ConversationFragment;
 
 import butterknife.BindView;
@@ -65,12 +68,26 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
 
     private void initFragment() {
         ConversationFragment conversationFragment = new ConversationFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.fl_content, conversationFragment, "0").commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fl_content, FragmentFactory.getFragment(0), "0").commit();
     }
 
     @Override
     public void onSelected(int index, int old) {
         mTvTitle.setText(TITLES[index]);
+
+        /**
+         * 切换Fragment
+         * 1. 将oldFragment给隐藏
+         * 2. 判断新Fragment是否被添加了，如果没有被添加则添加
+         */
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        BaseFragment fragment = FragmentFactory.getFragment(index);
+        if (!fragment.isAdded()) {
+            transaction.add(R.id.fl_content, fragment, index + "");
+        }
+        transaction.hide(FragmentFactory.getFragment(old));
+        transaction.show(fragment);
+        transaction.commit();
     }
 
     @Override
