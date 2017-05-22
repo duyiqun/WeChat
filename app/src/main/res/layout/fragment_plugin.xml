@@ -1,13 +1,33 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.qun.weichat.view.fragment.PluginFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="com.qun.weichat.view.fragment.PluginFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="20dp"
+        android:src="@mipmap/avatar6"/>
+
+    <Button
+        android:id="@+id/btn_logout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="动态"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/btn_logout_selector"
+        android:text="退出"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        android:textSize="22sp"/>
 
-</FrameLayout>
+    <CalendarView
+         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="15dp">
+
+    </CalendarView>
+
+</LinearLayout>
