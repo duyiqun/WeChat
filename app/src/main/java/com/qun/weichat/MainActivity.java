@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.qun.weichat.factory.FragmentFactory;
 import com.qun.weichat.view.activity.BaseActivity;
 import com.qun.weichat.view.fragment.BaseFragment;
-import com.qun.weichat.view.fragment.ConversationFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,14 +44,17 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
     private void initView() {
         mToolBar.setTitle("");
         setSupportActionBar(mToolBar);
-        initTab();
+        initTabs();
         mTvTitle.setText(TITLES[0]);
-        initFragment();
+        initFragments();
     }
 
-    private void initTab() {
-        mNavigationController = mTab.material().addItem(R.mipmap.conversation_selected_2, TITLES[0]).addItem(R.mipmap.contact_selected_2, TITLES[1]).addItem(R.mipmap.plugin_selected_2, TITLES[2]).build();
-
+    private void initTabs() {
+        mNavigationController = mTab.material()
+                .addItem(R.mipmap.conversation_selected_2, TITLES[0])
+                .addItem(R.mipmap.contact_selected_2, TITLES[1])
+                .addItem(R.mipmap.plugin_selected_2, TITLES[2])
+                .build();
         mNavigationController.addTabItemSelectedListener(this);
     }
 
@@ -66,9 +68,10 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
         return true;
     }
 
-    private void initFragment() {
-        ConversationFragment conversationFragment = new ConversationFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.fl_content, FragmentFactory.getFragment(0), "0").commit();
+    private void initFragments() {
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fl_content, FragmentFactory.getFragment(0), "0")
+                .commit();
     }
 
     @Override

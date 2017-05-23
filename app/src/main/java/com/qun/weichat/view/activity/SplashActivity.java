@@ -11,17 +11,21 @@ import com.qun.weichat.adapter.AnimatorAdapter;
 import com.qun.weichat.presenter.SplashPresenter;
 import com.qun.weichat.presenter.SplashPresenterImpl;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class SplashActivity extends BaseActivity implements SplashView {
 
     public static final int DURATION = 2000;
-    private ImageView mIvSplash;
+    @BindView(R.id.iv_splash)
+    ImageView mIvSplash;
     private SplashPresenter mSplashPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        mIvSplash = (ImageView) findViewById(R.id.iv_splash);
+        ButterKnife.bind(this);
 
         //在创建P层对象的时候，将自己也传递给P层，这样P层就可以回调View层的方法了
         mSplashPresenter = new SplashPresenterImpl(this);

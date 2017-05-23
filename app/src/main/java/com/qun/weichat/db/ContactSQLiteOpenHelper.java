@@ -28,7 +28,7 @@ public class ContactSQLiteOpenHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "create table t_contact(_id integer primary key, username  varchar(16), contact varchar(16))";
+        String sql = "create table t_contact(_id integer primary key, username varchar(16), contact varchar(16))";
         db.execSQL(sql);
     }
 

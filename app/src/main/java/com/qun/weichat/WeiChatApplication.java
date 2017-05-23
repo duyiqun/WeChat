@@ -80,5 +80,6 @@ public class WeiChatApplication extends Application {
     private void initAVOSCloud() {
         // 初始化参数依次为 this, AppId, AppKey
         AVOSCloud.initialize(this,"wl0RzoKYQBVL7X4uBoHuJxI8-gzGzoHsz","wbs6MPcKfYIHz8etg9wPxHX9");
+        AVOSCloud.setDebugLogEnabled(true);
     }
 }
