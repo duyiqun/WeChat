@@ -43,7 +43,7 @@ public class ContactFragment extends BaseFragment implements ContactView{
     @Override
     public void onInit(List<String> contactsList) {
         mContactAdapter = new ContactAdapter(contactsList);
-//        mContactLayout.setAdapter(mContactAdapter);
+        mContactLayout.setAdapter(mContactAdapter);
     }
 
     @Override

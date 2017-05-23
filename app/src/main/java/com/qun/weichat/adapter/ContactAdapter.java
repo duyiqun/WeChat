@@ -4,8 +4,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.qun.weichat.R;
+import com.qun.weichat.utils.StringUtils;
 
 import java.util.List;
 
@@ -30,7 +32,20 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
     @Override
     public void onBindViewHolder(ContactViewHolder holder, int position) {
-
+        String contact = contactsList.get(position);
+        holder.mTvUsername.setText(contact);
+        String initial = StringUtils.getInitial(contact);
+        if (position == 0) {
+            holder.mTvSection.setVisibility(View.VISIBLE);
+        } else {
+            String preContact = contactsList.get(position - 1);
+            if (StringUtils.getInitial(preContact).equals(initial)) {
+                //不用显示自己的Section
+                holder.mTvSection.setVisibility(View.GONE);
+            } else {
+                holder.mTvSection.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
@@ -40,8 +55,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
     class ContactViewHolder extends RecyclerView.ViewHolder {
 
+        private final TextView mTvSection;
+        private final TextView mTvUsername;
+
         public ContactViewHolder(View itemView) {
             super(itemView);
+            mTvSection = (TextView) itemView.findViewById(R.id.tv_section);
+            mTvUsername = (TextView) itemView.findViewById(R.id.tv_username);
         }
     }
 }

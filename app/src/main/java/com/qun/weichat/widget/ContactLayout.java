@@ -2,6 +2,7 @@ package com.qun.weichat.widget;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -43,5 +44,10 @@ public class ContactLayout extends RelativeLayout {
 
     public ContactLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         this(context, attrs, defStyleAttr);
+    }
+
+    public void setAdapter(RecyclerView.Adapter adapter){
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(adapter);
     }
 }
