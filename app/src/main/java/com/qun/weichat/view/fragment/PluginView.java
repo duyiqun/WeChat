@@ -5,6 +5,5 @@ package com.qun.weichat.view.fragment;
  */
 
 public interface PluginView {
-
     void onLogout(boolean isSuccess, String msg);
 }

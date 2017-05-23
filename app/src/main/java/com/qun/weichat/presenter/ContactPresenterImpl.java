@@ -6,6 +6,9 @@ import com.qun.weichat.db.DBUtils;
 import com.qun.weichat.utils.ThreadUtils;
 import com.qun.weichat.view.fragment.ContactView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -15,6 +18,7 @@ import java.util.List;
 public class ContactPresenterImpl implements ContactPresenter {
 
     private ContactView mContactView;
+    private List<String> contactsList = new ArrayList<>();
 
     public ContactPresenterImpl(ContactView contactView) {
         this.mContactView = contactView;
@@ -31,16 +35,46 @@ public class ContactPresenterImpl implements ContactPresenter {
     public void initContacts() {
         final String currentUser = EMClient.getInstance().getCurrentUser();
         List<String> contacts = DBUtils.getContacts(currentUser);
+        contactsList.clear();
+        contactsList.addAll(contacts);
+        sortContactList();
+        mContactView.onInit(contactsList);
 
         ThreadUtils.runOnSubThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    List<String> usernames = EMClient.getInstance().contactManager().getAllContactsFromServer();
-
-                } catch (HyphenateException e) {
+                    List<String> contactsFromServer = EMClient.getInstance().contactManager().getAllContactsFromServer();
+                    DBUtils.updateContacts(currentUser, contactsFromServer);
+                    contactsList.clear();
+                    contactsList.addAll(contactsFromServer);
+                    sortContactList();
+                    ThreadUtils.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mContactView.onUpdate(true, "success");
+                        }
+                    });
+                } catch (final HyphenateException e) {
                     e.printStackTrace();
+                    ThreadUtils.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mContactView.onUpdate(false, e.getMessage());
+                        }
+                    });
                 }
+            }
+        });
+    }
+
+    private void sortContactList() {
+        //给集合排序
+        Collections.sort(contactsList, new Comparator<String>() {
+
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareToIgnoreCase(o2);
             }
         });
     }

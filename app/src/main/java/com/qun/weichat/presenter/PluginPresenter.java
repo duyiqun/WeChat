@@ -5,6 +5,5 @@ package com.qun.weichat.presenter;
  */
 
 public interface PluginPresenter {
-
     void logout();
 }
