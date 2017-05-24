@@ -5,10 +5,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.qun.weichat.factory.FragmentFactory;
+import com.qun.weichat.view.activity.AddFriendActivity;
 import com.qun.weichat.view.activity.BaseActivity;
 import com.qun.weichat.view.fragment.BaseFragment;
 
@@ -64,6 +66,24 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
         if (menu instanceof MenuBuilder) {
             MenuBuilder menuBuilder = (MenuBuilder) menu;
             menuBuilder.setOptionalIconsVisible(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.add:
+                startActivity(AddFriendActivity.class, false);
+                break;
+            case R.id.share:
+
+                break;
+            case R.id.about:
+
+                break;
+            default:
+                break;
         }
         return true;
     }

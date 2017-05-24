@@ -70,6 +70,8 @@
         </activity>
         <activity android:name=".view.activity.RegistActivity">
         </activity>
+        <activity android:name=".view.activity.AddFriendActivity">
+        </activity>
     </application>
 
 </manifest>
