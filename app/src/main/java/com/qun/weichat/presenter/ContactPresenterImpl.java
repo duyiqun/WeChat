@@ -40,6 +40,10 @@ public class ContactPresenterImpl implements ContactPresenter {
         sortContactList();
         mContactView.onInit(contactsList);
 
+        updateFromServer(currentUser);
+    }
+
+    private void updateFromServer(final String currentUser) {
         ThreadUtils.runOnSubThread(new Runnable() {
             @Override
             public void run() {
@@ -66,6 +70,12 @@ public class ContactPresenterImpl implements ContactPresenter {
                 }
             }
         });
+    }
+
+    @Override
+    public void onUpdate() {
+        final String currentUser = EMClient.getInstance().getCurrentUser();
+        updateFromServer(currentUser);
     }
 
     private void sortContactList() {
