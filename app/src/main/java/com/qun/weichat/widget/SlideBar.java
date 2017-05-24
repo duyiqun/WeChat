@@ -42,6 +42,7 @@ public class SlideBar extends View {
     }
 
     private void init() {
+        //抗锯齿
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(Color.parseColor("#9C9C9C"));
         mPaint.setTextSize(DensityUtil.sp2px(getContext(), 10));
