@@ -1,20 +1,30 @@
 package com.qun.weichat.view.activity;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVUser;
 import com.qun.weichat.R;
+import com.qun.weichat.adapter.SearchFriendAdapter;
+import com.qun.weichat.presenter.AddFriendPresenter;
+import com.qun.weichat.presenter.AddFriendPresenterImpl;
+import com.qun.weichat.utils.ToastUtil;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AddFriendActivity extends BaseActivity implements SearchView.OnQueryTextListener {
+public class AddFriendActivity extends BaseActivity implements SearchView.OnQueryTextListener, AddFriendView, SearchFriendAdapter.OnAddBtnClickListener {
 
     @BindView(R.id.tv_title)
     TextView mTvTitle;
@@ -25,6 +35,7 @@ public class AddFriendActivity extends BaseActivity implements SearchView.OnQuer
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
     private SearchView mSearchView;
+    private AddFriendPresenter mAddFriendPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +53,7 @@ public class AddFriendActivity extends BaseActivity implements SearchView.OnQuer
 //                finish();
 //            }
 //        });
+        mAddFriendPresenter = new AddFriendPresenterImpl(this);
     }
 
     @Override
@@ -75,11 +87,49 @@ public class AddFriendActivity extends BaseActivity implements SearchView.OnQuer
      */
     @Override
     public boolean onQueryTextSubmit(String query) {
+//        ToastUtil.showMsg(this, "开始搜索:" + query);
+        showProgress("正在搜索");
+        mAddFriendPresenter.search(query);
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        return false;
+        ToastUtil.showMsg(this, newText);
+        return true;
+    }
+
+    @Override
+    public void onSearch(boolean isSuccess, String message, List<AVUser> userList, List<String> myFriendList) {
+        hideProgress();
+        //取消SearchView的焦点
+        mSearchView.clearFocus();
+        if (!isSuccess) {
+            ToastUtil.showMsg(this, message);
+            //显示nodata，隐藏RecyclerView
+            mIvNodata.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.INVISIBLE);
+        } else {
+            mIvNodata.setVisibility(View.INVISIBLE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+            SearchFriendAdapter searchFriendAdapter = new SearchFriendAdapter(userList, myFriendList);
+            searchFriendAdapter.setOnAddBtnClickListener(this);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setAdapter(searchFriendAdapter);
+        }
+    }
+
+    @Override
+    public void onAddFiend(boolean isSuccess, String msg, String username) {
+        if (!isSuccess) {
+            ToastUtil.showMsg(this, msg);
+        } else {
+            Snackbar.make(mRecyclerView, "给" + username + "发送邀请成功", Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onClick(AVUser avUser, int position) {
+
     }
 }
