@@ -100,12 +100,12 @@ public class AddFriendActivity extends BaseActivity implements SearchView.OnQuer
     }
 
     @Override
-    public void onSearch(boolean isSuccess, String message, List<AVUser> userList, List<String> myFriendList) {
+    public void onSearch(boolean isSuccess, String msg, List<AVUser> userList, List<String> myFriendList) {
         hideProgress();
         //取消SearchView的焦点
         mSearchView.clearFocus();
         if (!isSuccess) {
-            ToastUtil.showMsg(this, message);
+            ToastUtil.showMsg(this, msg);
             //显示nodata，隐藏RecyclerView
             mIvNodata.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.INVISIBLE);

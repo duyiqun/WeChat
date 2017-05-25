@@ -78,6 +78,34 @@ public class ContactPresenterImpl implements ContactPresenter {
         updateFromServer(currentUser);
     }
 
+    @Override
+    public void delete(final String username) {
+        ThreadUtils.runOnSubThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    EMClient.getInstance().contactManager().deleteContact(username, true);
+                    //成功
+                    ThreadUtils.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mContactView.onDelete(true, "success", username);
+                        }
+                    });
+                } catch (final HyphenateException e) {
+                    e.printStackTrace();
+                    //失败
+                    ThreadUtils.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mContactView.onDelete(false, e.getMessage(), username);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     private void sortContactList() {
         //给集合排序
         Collections.sort(contactsList, new Comparator<String>() {

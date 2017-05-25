@@ -9,4 +9,5 @@ import java.util.List;
 public interface ContactView {
     void onInit(List<String> contactsList);
     void onUpdate(boolean isSuccess, String msg);
+    void onDelete(boolean isSuccess, String msg, String username);
 }

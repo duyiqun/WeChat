@@ -9,6 +9,6 @@ import java.util.List;
  */
 
 public interface AddFriendView {
-    void onSearch(boolean isSuccess, String message, List<AVUser> userList, List<String> myFriendList);
-    void onAddFiend(boolean isSuccess, String success, String username);
+    void onSearch(boolean isSuccess, String msg, List<AVUser> userList, List<String> myFriendList);
+    void onAddFiend(boolean isSuccess, String msg, String username);
 }

@@ -95,6 +95,11 @@ public class ContactFragment extends BaseFragment implements ContactView, SwipeR
     }
 
     @Override
+    public void onDelete(boolean isSuccess, String msg, String username) {
+        ToastUtil.showMsg(getContext(), msg);
+    }
+
+    @Override
     public void onRefresh() {
         //更新通讯录
         mContactPresenter.onUpdate();
