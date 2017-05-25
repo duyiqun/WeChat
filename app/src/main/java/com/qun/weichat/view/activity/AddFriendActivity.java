@@ -120,16 +120,16 @@ public class AddFriendActivity extends BaseActivity implements SearchView.OnQuer
     }
 
     @Override
+    public void onClick(AVUser avUser, int position) {
+        mAddFriendPresenter.addFriend(avUser.getUsername());
+    }
+
+    @Override
     public void onAddFiend(boolean isSuccess, String msg, String username) {
         if (!isSuccess) {
             ToastUtil.showMsg(this, msg);
         } else {
             Snackbar.make(mRecyclerView, "给" + username + "发送邀请成功", Snackbar.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    public void onClick(AVUser avUser, int position) {
-
     }
 }

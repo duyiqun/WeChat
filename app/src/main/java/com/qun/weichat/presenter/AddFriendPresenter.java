@@ -6,4 +6,5 @@ package com.qun.weichat.presenter;
 
 public interface AddFriendPresenter {
     void search(String query);
+    void addFriend(String username);
 }

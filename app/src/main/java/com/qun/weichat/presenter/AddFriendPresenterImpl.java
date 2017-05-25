@@ -5,7 +5,9 @@ import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.qun.weichat.db.DBUtils;
+import com.qun.weichat.utils.ThreadUtils;
 import com.qun.weichat.view.activity.AddFriendView;
 
 import java.util.List;
@@ -41,6 +43,34 @@ public class AddFriendPresenterImpl implements AddFriendPresenter {
                 } else {//找到数据了
                     List<String> contacts = DBUtils.getContacts(currentUser);
                     mAddFriendView.onSearch(true, "success", list, contacts);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void addFriend(final String username) {
+        ThreadUtils.runOnSubThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    EMClient.getInstance().contactManager().addContact(username, "想和你交朋友，一起写代码。");
+                    //仅仅是邀请发送成功了
+                    ThreadUtils.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAddFriendView.onAddFiend(true, "success", username);
+                        }
+                    });
+                } catch (final HyphenateException e) {
+                    e.printStackTrace();
+                    //网络的问题
+                    ThreadUtils.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAddFriendView.onAddFiend(false, e.getMessage(), username);
+                        }
+                    });
                 }
             }
         });

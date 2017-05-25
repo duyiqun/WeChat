@@ -25,7 +25,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
     private List<String> myFriendList;
 
     public SearchFriendAdapter(List<AVUser> AVUserList, List<String> myFriendList) {
-        mAVUserList = AVUserList;
+        this.mAVUserList = AVUserList;
         this.myFriendList = myFriendList;
     }
 
