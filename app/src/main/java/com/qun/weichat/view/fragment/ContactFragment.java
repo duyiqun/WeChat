@@ -1,8 +1,10 @@
 package com.qun.weichat.view.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import com.qun.weichat.event.ContactUpdateEvent;
 import com.qun.weichat.presenter.ContactPresenter;
 import com.qun.weichat.presenter.ContactPresenterImpl;
 import com.qun.weichat.utils.ToastUtil;
+import com.qun.weichat.view.activity.ChatActivity;
 import com.qun.weichat.widget.ContactLayout;
 
 import org.greenrobot.eventbus.EventBus;
@@ -26,7 +29,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ContactFragment extends BaseFragment implements ContactView, SwipeRefreshLayout.OnRefreshListener {
+public class ContactFragment extends BaseFragment implements ContactView, SwipeRefreshLayout.OnRefreshListener, ContactAdapter.OnContactItemClickListener {
 
     private ContactPresenter mContactPresenter;
     private ContactLayout mContactLayout;
@@ -76,6 +79,7 @@ public class ContactFragment extends BaseFragment implements ContactView, SwipeR
     @Override
     public void onInit(List<String> contactsList) {
         mContactAdapter = new ContactAdapter(contactsList);
+        mContactAdapter.setOnContactItemClickListener(this);
         mContactLayout.setAdapter(mContactAdapter);
     }
 
@@ -94,5 +98,23 @@ public class ContactFragment extends BaseFragment implements ContactView, SwipeR
     public void onRefresh() {
         //更新通讯录
         mContactPresenter.onUpdate();
+    }
+
+    @Override
+    public void onClick(String username, int position) {
+        Intent intent = new Intent(getContext(), ChatActivity.class);
+        intent.putExtra("username", username);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onLongClick(final String username, int position) {
+        //显示SnackBar，提示用户是否删除username
+        Snackbar.make(mContactLayout, "你和" + username + "撕破脸了吗？", Snackbar.LENGTH_LONG).setAction("确定", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContactPresenter.delete(username);
+            }
+        }).show();
     }
 }

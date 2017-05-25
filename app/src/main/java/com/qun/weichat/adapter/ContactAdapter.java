@@ -31,8 +31,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     }
 
     @Override
-    public void onBindViewHolder(ContactViewHolder holder, int position) {
-        String contact = contactsList.get(position);
+    public void onBindViewHolder(ContactViewHolder holder, final int position) {
+        final String contact = contactsList.get(position);
         holder.mTvUsername.setText(contact);
         String initial = StringUtils.getInitial(contact);
         if (position == 0) {
@@ -46,6 +46,23 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                 holder.mTvSection.setVisibility(View.VISIBLE);
             }
         }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnContactItemClickListener != null) {
+                    mOnContactItemClickListener.onClick(contact, position);
+                }
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mOnContactItemClickListener != null) {
+                    mOnContactItemClickListener.onLongClick(contact, position);
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -68,5 +85,17 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             mTvSection = (TextView) itemView.findViewById(R.id.tv_section);
             mTvUsername = (TextView) itemView.findViewById(R.id.tv_username);
         }
+    }
+
+    public interface OnContactItemClickListener {
+        void onClick(String username, int position);
+
+        void onLongClick(String username, int position);
+    }
+
+    private OnContactItemClickListener mOnContactItemClickListener;
+
+    public void setOnContactItemClickListener(OnContactItemClickListener onContactItemClickListener) {
+        mOnContactItemClickListener = onContactItemClickListener;
     }
 }

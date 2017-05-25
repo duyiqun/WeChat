@@ -60,6 +60,9 @@ public class WeiChatApplication extends Application {
         EMClient.getInstance().init(this, options);
         //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(true);
+
+        //监听通讯录变化
+        initContactListener();
     }
 
     private String getAppName(int pID) {
@@ -86,13 +89,9 @@ public class WeiChatApplication extends Application {
         // 初始化参数依次为 this, AppId, AppKey
         AVOSCloud.initialize(this, "wl0RzoKYQBVL7X4uBoHuJxI8-gzGzoHsz", "wbs6MPcKfYIHz8etg9wPxHX9");
         AVOSCloud.setDebugLogEnabled(true);
-
-        //监听通讯录变化
-        initContactListener();
     }
 
     private void initContactListener() {
-
         EMClient.getInstance().contactManager().setContactListener(new EMContactListener() {
 
             @Override
