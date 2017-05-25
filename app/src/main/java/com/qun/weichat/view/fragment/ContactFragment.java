@@ -11,10 +11,15 @@ import android.view.ViewGroup;
 
 import com.qun.weichat.R;
 import com.qun.weichat.adapter.ContactAdapter;
+import com.qun.weichat.event.ContactUpdateEvent;
 import com.qun.weichat.presenter.ContactPresenter;
 import com.qun.weichat.presenter.ContactPresenterImpl;
 import com.qun.weichat.utils.ToastUtil;
 import com.qun.weichat.widget.ContactLayout;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -40,6 +45,32 @@ public class ContactFragment extends BaseFragment implements ContactView, SwipeR
         mContactPresenter = new ContactPresenterImpl(this);
         mContactPresenter.initContacts();
         mContactLayout.setOnRefreshListener(this);
+        //注册EventBus
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //取消注册
+        EventBus.getDefault().unregister(this);
+    }
+
+    /**
+     * 1. 形参必须跟发送者发送的对象是一样的类型
+     * 2. 添加注解
+     * 3. 线程模型
+     * 1）ThreadMode.MAIN 不管发送者在哪个线程发送的，该方法都在主线程中被调用
+     * 2）ThreadMode.POSTING 发送者在哪个线程发送的,接收者就在哪个线程被调用
+     * 3）ThreadMode.BACKGROUND 如果发送者是在子线程中被调用的，那么接收者也在这个线程中被调用
+     * 如果发送者是在主线程中被调用的，那么接收者就会被EventBus内部的单线程池中被调用
+     * 4）ThreadMode.ASYNC 不管发送者是在哪个线程发送的，接收者都会在新的子线程中被调用
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ContactUpdateEvent contactUpdateEvent) {
+        ToastUtil.showMsg(getContext(), (contactUpdateEvent.isAdd ? "添加了：" : "删除了") + contactUpdateEvent.username);
+        //更新通讯录，从环信把最新的通讯录更新下来
+        mContactPresenter.onUpdate();
     }
 
     @Override

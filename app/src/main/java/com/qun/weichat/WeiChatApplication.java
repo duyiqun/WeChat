@@ -6,9 +6,14 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 
 import com.avos.avoscloud.AVOSCloud;
+import com.hyphenate.EMContactListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
+import com.hyphenate.exceptions.HyphenateException;
 import com.qun.weichat.db.DBUtils;
+import com.qun.weichat.event.ContactUpdateEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Iterator;
 import java.util.List;
@@ -79,7 +84,49 @@ public class WeiChatApplication extends Application {
 
     private void initAVOSCloud() {
         // 初始化参数依次为 this, AppId, AppKey
-        AVOSCloud.initialize(this,"wl0RzoKYQBVL7X4uBoHuJxI8-gzGzoHsz","wbs6MPcKfYIHz8etg9wPxHX9");
+        AVOSCloud.initialize(this, "wl0RzoKYQBVL7X4uBoHuJxI8-gzGzoHsz", "wbs6MPcKfYIHz8etg9wPxHX9");
         AVOSCloud.setDebugLogEnabled(true);
+
+        //监听通讯录变化
+        initContactListener();
+    }
+
+    private void initContactListener() {
+
+        EMClient.getInstance().contactManager().setContactListener(new EMContactListener() {
+
+            @Override
+            public void onContactAdded(String username) {
+                Log.d(TAG, "onContactAdded: " + username);
+                EventBus.getDefault().post(new ContactUpdateEvent(username, true));
+            }
+
+            @Override
+            public void onContactDeleted(String username) {
+                Log.d(TAG, "onContactDeleted: " + username);
+                EventBus.getDefault().post(new ContactUpdateEvent(username, false));
+            }
+
+            @Override
+            public void onContactInvited(String username, String reason) {
+                //自动同意
+                try {
+                    EMClient.getInstance().contactManager().acceptInvitation(username);
+                    Log.d(TAG, "onContactInvited: " + username + "/" + reason);
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFriendRequestAccepted(String username) {
+                Log.d(TAG, "onFriendRequestAccepted: " + username);
+            }
+
+            @Override
+            public void onFriendRequestDeclined(String username) {
+                Log.d(TAG, "onFriendRequestDeclined: " + username);
+            }
+        });
     }
 }
