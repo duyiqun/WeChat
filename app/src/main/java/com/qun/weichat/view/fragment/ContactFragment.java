@@ -107,9 +107,9 @@ public class ContactFragment extends BaseFragment implements ContactView, SwipeR
 
     @Override
     public void onClick(String username, int position) {
-//        Intent intent = new Intent(getContext(), ChatActivity.class);
-//        intent.putExtra("username", username);
-//        startActivity(intent);
+        Intent intent = new Intent(getContext(), ChatActivity.class);
+        intent.putExtra("username", username);
+        startActivity(intent);
     }
 
     @Override
