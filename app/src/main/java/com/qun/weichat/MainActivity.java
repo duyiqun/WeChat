@@ -46,12 +46,12 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
     private void initView() {
         mToolBar.setTitle("");
         setSupportActionBar(mToolBar);
-        initTabs();
+        initTab();
         mTvTitle.setText(TITLES[0]);
-        initFragments();
+        initFragment();
     }
 
-    private void initTabs() {
+    private void initTab() {
         mNavigationController = mTab.material()
                 .addItem(R.mipmap.conversation_selected_2, TITLES[0])
                 .addItem(R.mipmap.contact_selected_2, TITLES[1])
@@ -88,7 +88,7 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
         return true;
     }
 
-    private void initFragments() {
+    private void initFragment() {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fl_content, FragmentFactory.getFragment(0), "0")
                 .commit();
