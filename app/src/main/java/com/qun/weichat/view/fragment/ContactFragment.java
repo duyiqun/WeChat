@@ -70,7 +70,7 @@ public class ContactFragment extends BaseFragment implements ContactView, SwipeR
      * 4）ThreadMode.ASYNC 不管发送者是在哪个线程发送的，接收者都会在新的子线程中被调用
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(ContactUpdateEvent contactUpdateEvent) {
+    public void onEvent(ContactUpdateEvent contactUpdateEvent) {
         ToastUtil.showMsg(getContext(), (contactUpdateEvent.isAdd ? "添加了：" : "删除了") + contactUpdateEvent.username);
         //更新通讯录，从环信把最新的通讯录更新下来
         mContactPresenter.onUpdate();

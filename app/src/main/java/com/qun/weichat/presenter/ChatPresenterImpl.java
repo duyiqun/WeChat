@@ -56,4 +56,9 @@ public class ChatPresenterImpl implements ChatPresenter {
         EMClient.getInstance().chatManager().sendMessage(message);//异步方法
         mChatView.onSendMsg(message);
     }
+
+    @Override
+    public void receiveMsg(EMMessage emMessage) {
+
+    }
 }

@@ -7,7 +7,9 @@ import android.util.Log;
 
 import com.avos.avoscloud.AVOSCloud;
 import com.hyphenate.EMContactListener;
+import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.exceptions.HyphenateException;
 import com.qun.weichat.db.DBUtils;
@@ -63,6 +65,8 @@ public class WeiChatApplication extends Application {
 
         //监听通讯录变化
         initContactListener();
+        //添加消息监听
+        initMessageListener();
     }
 
     private String getAppName(int pID) {
@@ -125,6 +129,38 @@ public class WeiChatApplication extends Application {
             @Override
             public void onFriendRequestDeclined(String username) {
                 Log.d(TAG, "onFriendRequestDeclined: " + username);
+            }
+        });
+    }
+
+    private void initMessageListener() {
+        EMClient.getInstance().chatManager().addMessageListener(new EMMessageListener() {
+
+            @Override
+            public void onMessageReceived(List<EMMessage> list) {
+                //收到消息
+                Log.d(TAG, "onMessageReceived: " + list.get(0).toString());
+                EventBus.getDefault().post(list.get(0));
+            }
+
+            @Override
+            public void onCmdMessageReceived(List<EMMessage> list) {
+                //收到透传消息
+            }
+
+            @Override
+            public void onMessageRead(List<EMMessage> list) {
+                //收到已读回执
+            }
+
+            @Override
+            public void onMessageDelivered(List<EMMessage> list) {
+                //收到已送达回执
+            }
+
+            @Override
+            public void onMessageChanged(EMMessage emMessage, Object o) {
+                //消息状态变动
             }
         });
     }

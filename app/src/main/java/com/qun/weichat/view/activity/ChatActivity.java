@@ -24,6 +24,10 @@ import com.qun.weichat.presenter.ChatPresenter;
 import com.qun.weichat.presenter.ChatPresenterImpl;
 import com.qun.weichat.utils.ToastUtil;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -62,6 +66,24 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
 
         initView();
         initData();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(EMMessage emMessage) {
+        //判断这个消息是否是当前的聊天对象给我发送的
+        if (emMessage.getFrom().equals(mUsername)) {
+            //将emMessage发送给ChatPresenter ,让P层将emMessage添加到集合中
+            mChatPresenter.receiveMsg(emMessage);
+            mChatAdapter.notifyDataSetChanged();
+            mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount() - 1);
+        }
     }
 
     private void initView() {
@@ -170,7 +192,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
 
     @Override
     public void onInit(List<EMMessage> emMessageList) {
-        mChatAdapter = new ChatAdapter(emMessageList,this);
+        mChatAdapter = new ChatAdapter(emMessageList, this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mChatAdapter);
         mRecyclerView.scrollToPosition(emMessageList.size() - 1);
