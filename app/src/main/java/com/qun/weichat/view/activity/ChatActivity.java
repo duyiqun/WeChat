@@ -187,7 +187,8 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
 
     @Override
     public void onRefresh() {
-
+        //加载更多的聊天记录
+        mChatPresenter.loadMoreMsg(pageSize);
     }
 
     @Override
@@ -203,5 +204,15 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
         mChatAdapter.notifyDataSetChanged();
         //让RecyclerView平滑滚动一条
         mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount() - 1);
+    }
+
+    @Override
+    public void onLoadMore(boolean isSuccess, String msg, int loadCount) {
+        mSwipeRefreshLayout.setRefreshing(false);
+        if (isSuccess) {
+            mChatAdapter.notifyDataSetChanged();
+            mRecyclerView.scrollToPosition(loadCount);
+        }
+        ToastUtil.showMsg(this, msg);
     }
 }

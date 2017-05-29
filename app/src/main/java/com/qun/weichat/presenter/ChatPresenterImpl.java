@@ -51,7 +51,7 @@ public class ChatPresenterImpl implements ChatPresenter {
          * 2. 调用环信SDK发送消息
          * 3. 通知ChatView更新界面
          */
-        EMMessage message = EMMessage.createTxtSendMessage(msg,username);
+        EMMessage message = EMMessage.createTxtSendMessage(msg, username);
         mEMMessageList.add(message);
         EMClient.getInstance().chatManager().sendMessage(message);//异步方法
         mChatView.onSendMsg(message);
@@ -59,6 +59,25 @@ public class ChatPresenterImpl implements ChatPresenter {
 
     @Override
     public void receiveMsg(EMMessage emMessage) {
+        mEMMessageList.add(emMessage);
+    }
 
+    @Override
+    public void loadMoreMsg(int pageSize) {
+        if (mConversation == null) {
+            mChatView.onLoadMore(false, "没有更多消息了", 0);
+        } else {
+            //判断是否还有更多消息
+            int allMsgCount = mConversation.getAllMsgCount();
+            //如果当前已经显示出来的消息>=allMsgCount 则代表已经没有更多
+            if (mEMMessageList.size() >= allMsgCount) {
+                mChatView.onLoadMore(false, "没有更多消息了", 0);
+            } else {
+                EMMessage message = mEMMessageList.get(0);
+                List<EMMessage> loadMoreMsgFromDB = mConversation.loadMoreMsgFromDB(message.getMsgId(), pageSize);
+                mEMMessageList.addAll(0, loadMoreMsgFromDB);
+                mChatView.onLoadMore(true, "又加载了" + loadMoreMsgFromDB.size() + "条数据", loadMoreMsgFromDB.size());
+            }
+        }
     }
 }
