@@ -3,13 +3,17 @@ package com.qun.weichat.adapter;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
+import com.hyphenate.chat.EMMessageBody;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.DateUtils;
 import com.qun.weichat.R;
@@ -148,7 +152,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             });
             //设置mIvState的状态
             EMMessage.Status status = emMessage.status();
-            switch (status){
+            switch (status) {
                 case CREATE:
                 case INPROGRESS:
                     showFrameAnimation(holder.mIvState);
@@ -161,14 +165,42 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                     holder.mIvState.setImageResource(R.mipmap.msg_error);
                     break;
             }
+        } else if (emMessage.direct() == EMMessage.Direct.RECEIVE && emMessage.getType() == EMMessage.Type.IMAGE) {
+            //接收的图片
+            EMMessageBody imageBody = emMessage.getBody();
+            if (imageBody instanceof EMImageMessageBody) {
+                EMImageMessageBody imageMessageBody = (EMImageMessageBody) imageBody;
+                String remoteUrl = imageMessageBody.getRemoteUrl();
+                String fileName = imageMessageBody.getFileName();
+                //缩略图的地址
+                String thumbnailUrl = imageMessageBody.getThumbnailUrl();
+                Log.d(TAG, "onBindViewHolder: thumbnailUrl=" + thumbnailUrl + "/remoteUrl=" + remoteUrl + "/fileName=" + fileName);
+                Glide.with(mContext).load(thumbnailUrl).asBitmap().into(holder.mIvImage);
+            }
+
+
+            //            holder.mIvImage
+        } else if (emMessage.direct() == EMMessage.Direct.SEND && emMessage.getType() == EMMessage.Type.IMAGE) {
+            //发送的图片
+            EMMessageBody imageBody = emMessage.getBody();
+            if (imageBody instanceof EMImageMessageBody) {
+                EMImageMessageBody imageMessageBody = (EMImageMessageBody) imageBody;
+                String remoteUrl = imageMessageBody.getRemoteUrl();
+                String fileName = imageMessageBody.getFileName();
+                String localUrl = imageMessageBody.getLocalUrl();
+                //缩略图的地址
+                String thumbnailUrl = imageMessageBody.getThumbnailUrl();
+                Log.d(TAG, "onBindViewHolder: thumbnailUrl=" + thumbnailUrl + "/remoteUrl=" + remoteUrl + "/fileName=" + fileName + "/localUrl=" + localUrl);
+                Glide.with(mContext).load(localUrl).asBitmap().into(holder.mIvImage);
+            }
         }
     }
 
     private void showFrameAnimation(ImageView imageState) {
         imageState.setVisibility(View.VISIBLE);
         imageState.setImageResource(R.drawable.send_text_animation);
-        AnimationDrawable  animationDrawable = (AnimationDrawable) imageState.getDrawable();
-        if (animationDrawable.isRunning()){
+        AnimationDrawable animationDrawable = (AnimationDrawable) imageState.getDrawable();
+        if (animationDrawable.isRunning()) {
             animationDrawable.stop();
         }
         animationDrawable.start();

@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface ChatView {
     void onInit(List<EMMessage> emMessageList);
+    void onSendMsg(EMMessage message);
 }

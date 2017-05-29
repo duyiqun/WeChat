@@ -43,4 +43,17 @@ public class ChatPresenterImpl implements ChatPresenter {
         }
         mChatView.onInit(mEMMessageList);
     }
+
+    @Override
+    public void sendTextMessage(String msg, String username) {
+        /**
+         * 1. 将msg添加到mEMMessageList中
+         * 2. 调用环信SDK发送消息
+         * 3. 通知ChatView更新界面
+         */
+        EMMessage message = EMMessage.createTxtSendMessage(msg,username);
+        mEMMessageList.add(message);
+        EMClient.getInstance().chatManager().sendMessage(message);//异步方法
+        mChatView.onSendMsg(message);
+    }
 }

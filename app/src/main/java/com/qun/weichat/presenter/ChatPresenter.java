@@ -6,4 +6,5 @@ package com.qun.weichat.presenter;
 
 public interface ChatPresenter {
     void init(String username, int pageSize);
+    void sendTextMessage(String msg, String username);
 }

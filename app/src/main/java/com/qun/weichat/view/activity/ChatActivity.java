@@ -88,6 +88,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
         mIvCamera.setOnClickListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.colorAccent));
         mSwipeRefreshLayout.setOnRefreshListener(this);
+        mBtnSend.setOnClickListener(this);
     }
 
     //获取历史聊天记录，然后展示到RecyclerView上
@@ -135,6 +136,8 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
             case R.id.btn_send:
                 sendMsg();
                 break;
+            default:
+                break;
         }
     }
 
@@ -151,7 +154,13 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
     }
 
     private void sendMsg() {
-
+        String msg = mEtMsg.getText().toString();
+        if (TextUtils.isEmpty(msg)) {
+            ToastUtil.showMsg(this, "发送的内容不能为空");
+            return;
+        }
+        mEtMsg.getText().clear();
+        mChatPresenter.sendTextMessage(msg, mUsername);
     }
 
     @Override
@@ -165,5 +174,12 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mChatAdapter);
         mRecyclerView.scrollToPosition(emMessageList.size() - 1);
+    }
+
+    @Override
+    public void onSendMsg(EMMessage message) {
+        mChatAdapter.notifyDataSetChanged();
+        //让RecyclerView平滑滚动一条
+        mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount() - 1);
     }
 }
