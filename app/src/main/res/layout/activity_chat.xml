@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.qun.weichat.widget.KeyboardListenerLinearLayout
+    android:id="@+id/ll_chat"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -191,5 +192,5 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</com.qun.weichat.widget.KeyboardListenerLinearLayout>
 

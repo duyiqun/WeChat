@@ -23,6 +23,7 @@ import com.qun.weichat.adapter.ChatAdapter;
 import com.qun.weichat.presenter.ChatPresenter;
 import com.qun.weichat.presenter.ChatPresenterImpl;
 import com.qun.weichat.utils.ToastUtil;
+import com.qun.weichat.widget.KeyboardListenerLinearLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,7 +34,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ChatActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ChatView {
+public class ChatActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ChatView, KeyboardListenerLinearLayout.OnKeyboardChangedListener {
 
     private static final int REQUEST_PIC = 100;
     @BindView(R.id.tv_title)
@@ -57,6 +58,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
     //每页多少条聊天记录
     private int pageSize = 20;
     private ChatAdapter mChatAdapter;
+    private KeyboardListenerLinearLayout mKeyboardListenerLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +113,17 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.colorAccent));
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mBtnSend.setOnClickListener(this);
+
+//        LinearLayout llChat = (LinearLayout) findViewById(R.id.ll_chat);
+//        llChat.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+//            @Override
+//            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+//                ToastUtil.showMsg(getApplicationContext(), "改变后的：" + bottom + "/改变前的：" + oldBottom);
+//            }
+//        });
+
+        mKeyboardListenerLinearLayout = (KeyboardListenerLinearLayout) findViewById(R.id.ll_chat);
+        mKeyboardListenerLinearLayout.setOnKeyboardChangedListener(this);
     }
 
     //获取历史聊天记录，然后展示到RecyclerView上
@@ -214,5 +227,14 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
             mRecyclerView.scrollToPosition(loadCount);
         }
         ToastUtil.showMsg(this, msg);
+    }
+
+    @Override
+    public void onKeyboardChanged(boolean isOpen) {
+        if (isOpen) {
+            if (mRecyclerView != null && mChatAdapter != null) {
+                mRecyclerView.scrollToPosition(mChatAdapter.getItemCount() - 1);
+            }
+        }
     }
 }
