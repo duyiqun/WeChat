@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.hyphenate.chat.EMMessage;
 import com.qun.weichat.R;
 import com.qun.weichat.adapter.ChatAdapter;
@@ -239,28 +238,6 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mChatAdapter);
         mRecyclerView.scrollToPosition(emMessageList.size() - 1);
-
-        //监听RecyclerView的滚动事件
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                switch (newState) {
-                    case RecyclerView.SCROLL_STATE_IDLE://停止
-                        Glide.with(ChatActivity.this.getApplicationContext()).resumeRequests();
-                        break;
-                    case RecyclerView.SCROLL_STATE_DRAGGING://手动拖拽滚动
-                    case RecyclerView.SCROLL_STATE_SETTLING://惯性滚动
-                        Glide.with(ChatActivity.this.getApplicationContext()).pauseRequests();
-                        break;
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-        });
     }
 
     @Override
