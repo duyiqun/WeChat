@@ -202,7 +202,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
 
                 Uri uri = data.getData();
                 Cursor cursor = getContentResolver().query(uri, new String[]{MediaStore.Images.Media.DATA}, null, null, null);
-                if (cursor.moveToFirst()) {
+                if(cursor.moveToFirst()){
                     String imagePath = cursor.getString(0);
                     sendImageMsg(imagePath);
                 }
@@ -285,16 +285,6 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
         if (isOpen) {
             if (mRecyclerView != null && mChatAdapter != null) {
                 mRecyclerView.scrollToPosition(mChatAdapter.getItemCount() - 1);
-            }
-
-            //可解决软键盘弹出
-            LinearLayoutManager layoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-            int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-
-            View lastVisibleView = layoutManager.findViewByPosition(lastVisibleItemPosition);
-            if (lastVisibleView != null) {
-                int measuredHeight = lastVisibleView.getMeasuredHeight();
-                layoutManager.scrollToPositionWithOffset(lastVisibleItemPosition, -measuredHeight);
             }
         }
     }
