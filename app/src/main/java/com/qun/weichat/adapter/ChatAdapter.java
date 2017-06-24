@@ -172,10 +172,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 EMImageMessageBody imageMessageBody = (EMImageMessageBody) imageBody;
                 String remoteUrl = imageMessageBody.getRemoteUrl();
                 String fileName = imageMessageBody.getFileName();
-                //缩略图的地址
-                String thumbnailUrl = imageMessageBody.getThumbnailUrl();
-                Log.d(TAG, "onBindViewHolder: thumbnailUrl=" + thumbnailUrl + "/remoteUrl=" + remoteUrl + "/fileName=" + fileName);
-                Glide.with(mContext).load(thumbnailUrl).asBitmap().into(holder.mIvImage);
+                //缩略图的地址(网络)
+//                String thumbnailUrl = imageMessageBody.getThumbnailUrl();
+                //缩略图本地地址(显示并不清晰)
+                String thumbnailLocalPath = imageMessageBody.thumbnailLocalPath();
+
+                Log.d(TAG, "onBindViewHolder: thumbnailLocalPath=" + thumbnailLocalPath + "/remoteUrl=" + remoteUrl + "/fileName=" + fileName);
+                Glide.with(mContext).load(thumbnailLocalPath).asBitmap().into(holder.mIvImage);
             }
             //            holder.mIvImage
         } else if (emMessage.direct() == EMMessage.Direct.SEND && emMessage.getType() == EMMessage.Type.IMAGE) {
