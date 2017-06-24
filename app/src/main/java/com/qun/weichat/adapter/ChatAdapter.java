@@ -177,8 +177,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 Log.d(TAG, "onBindViewHolder: thumbnailUrl=" + thumbnailUrl + "/remoteUrl=" + remoteUrl + "/fileName=" + fileName);
                 Glide.with(mContext).load(thumbnailUrl).asBitmap().into(holder.mIvImage);
             }
-
-
             //            holder.mIvImage
         } else if (emMessage.direct() == EMMessage.Direct.SEND && emMessage.getType() == EMMessage.Type.IMAGE) {
             //发送的图片
