@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,6 +38,7 @@ import butterknife.ButterKnife;
 public class ChatActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ChatView, KeyboardListenerLinearLayout.OnKeyboardChangedListener {
 
     private static final int REQUEST_PIC = 100;
+    private static final String TAG = "ChatActivity";
     @BindView(R.id.tv_title)
     TextView mTvTitle;
     @BindView(R.id.toolBar)
@@ -186,6 +188,19 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
          */
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_PIC);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PIC) {
+            if (resultCode == RESULT_OK) {
+                ToastUtil.showMsg(this, "选择图片：" + data.getData());
+                Log.d(TAG, "onActivityResult：" + data.getData());
+            } else {
+                ToastUtil.showMsg(this, "没有选择图片");
+            }
+        }
     }
 
     private void sendMsg() {
