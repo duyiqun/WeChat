@@ -1,6 +1,8 @@
 package com.qun.weichat.view.activity;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -195,12 +196,24 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PIC) {
             if (resultCode == RESULT_OK) {
-                ToastUtil.showMsg(this, "选择图片：" + data.getData());
-                Log.d(TAG, "onActivityResult：" + data.getData());
+//                ToastUtil.showMsg(this, "选择图片：" + data.getData());
+//                Log.d(TAG, "onActivityResult：" + data.getData());
+
+                Uri uri = data.getData();
+                Cursor cursor = getContentResolver().query(uri, new String[]{MediaStore.Images.Media.DATA}, null, null, null);
+                if(cursor.moveToFirst()){
+                    String imagePath = cursor.getString(0);
+                    sendImageMsg(imagePath);
+                }
+                cursor.close();
             } else {
                 ToastUtil.showMsg(this, "没有选择图片");
             }
         }
+    }
+
+    private void sendImageMsg(String imagePath) {
+        mChatPresenter.sendImageMsg(imagePath, mUsername);
     }
 
     private void sendMsg() {

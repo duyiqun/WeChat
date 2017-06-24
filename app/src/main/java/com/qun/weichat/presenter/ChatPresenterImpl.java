@@ -8,6 +8,8 @@ import com.qun.weichat.view.activity.ChatView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.id.message;
+
 /**
  * Created by Qun on 2017/5/26.
  */
@@ -79,5 +81,20 @@ public class ChatPresenterImpl implements ChatPresenter {
                 mChatView.onLoadMore(true, "又加载了" + loadMoreMsgFromDB.size() + "条数据", loadMoreMsgFromDB.size());
             }
         }
+    }
+
+    @Override
+    public void sendImageMsg(String imagePath, String username) {
+        /**
+         * 1.将ImageMessage添加到集合中
+         * 2.通知View更新界面
+         * 3.调用SDK发送图片
+         * 参数2：是否发送原图
+         */
+        EMMessage imageSendMessage = EMMessage.createImageSendMessage(imagePath, true, username);
+        mEMMessageList.add(imageSendMessage);
+        mChatView.onSendMsg(imageSendMessage);
+
+        EMClient.getInstance().chatManager().sendMessage(imageSendMessage);
     }
 }

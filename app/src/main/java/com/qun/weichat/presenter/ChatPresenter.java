@@ -11,4 +11,5 @@ public interface ChatPresenter {
     void sendTextMessage(String msg, String username);
     void receiveMsg(EMMessage emMessage);
     void loadMoreMsg(int pageSize);
+    void sendImageMsg(String imagePath, String username);
 }
