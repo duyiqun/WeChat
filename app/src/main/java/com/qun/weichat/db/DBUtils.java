@@ -14,16 +14,17 @@ import java.util.List;
 
 public class DBUtils {
 
-    private static ContactSQLiteOpenHelper sContactSQLiteOpenHelper;
+    private static Context sContext;
 
     public static void init(Context context) {
-        sContactSQLiteOpenHelper = new ContactSQLiteOpenHelper(context);
+        sContext = context;
     }
 
     public static List<String> getContacts(String username) {
         checkInit();
+        ContactSQLiteOpenHelper contactSQLiteOpenHelper = new ContactSQLiteOpenHelper(sContext);
         List<String> contactList = new ArrayList<>();
-        SQLiteDatabase database = sContactSQLiteOpenHelper.getReadableDatabase();
+        SQLiteDatabase database = contactSQLiteOpenHelper.getReadableDatabase();
         String sql = "select contact from t_contact where username=?";
         Cursor cursor = database.rawQuery(sql, new String[]{username});
         while (cursor.moveToNext()) {
@@ -32,6 +33,7 @@ public class DBUtils {
         }
         cursor.close();
         database.close();
+        contactSQLiteOpenHelper.close();
         return contactList;
     }
 
@@ -44,7 +46,9 @@ public class DBUtils {
      * @param contacts
      */
     public static void updateContacts(String username, List<String> contacts) {
-        SQLiteDatabase database = sContactSQLiteOpenHelper.getWritableDatabase();
+        checkInit();
+        ContactSQLiteOpenHelper contactSQLiteOpenHelper = new ContactSQLiteOpenHelper(sContext);
+        SQLiteDatabase database = contactSQLiteOpenHelper.getWritableDatabase();
         database.beginTransaction();
         //delete from t_contact where username='zhangsan'
         database.delete("t_contact", "username=?", new String[]{username});
@@ -58,10 +62,11 @@ public class DBUtils {
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
+        contactSQLiteOpenHelper.close();
     }
 
     private static void checkInit() {
-        if (sContactSQLiteOpenHelper == null) {
+        if (sContext == null) {
             throw new RuntimeException("DBUtils必须先初始化再使用");
         }
     }
