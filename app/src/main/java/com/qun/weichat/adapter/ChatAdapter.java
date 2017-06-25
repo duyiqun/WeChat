@@ -1,6 +1,7 @@
 package com.qun.weichat.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,11 +12,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMMessageBody;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.DateUtils;
+import com.hyphenate.util.DensityUtil;
 import com.qun.weichat.R;
 
 import java.util.Date;
@@ -34,6 +38,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     private static final int SEND_TEXT = 3;
     private static final int SEND_IMAGE = 4;
     private static final int SEND_UNKNOWN = 5;
+    public static final int MAX_WIDTH = 200;
+    public static final int MIN_WIDTH = 100;
+    public static final int MAX_HEIGHT = 300;
+    public static final int MIN_HEIGHT = 150;
     private List<EMMessage> mEMMessageList;
     private Context mContext;
 
@@ -178,7 +186,50 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 String thumbnailLocalPath = imageMessageBody.thumbnailLocalPath();
 
                 Log.d(TAG, "onBindViewHolder: thumbnailLocalPath=" + thumbnailLocalPath + "/remoteUrl=" + remoteUrl + "/fileName=" + fileName);
-                Glide.with(mContext).load(thumbnailLocalPath).asBitmap().into(holder.mIvImage);
+                Glide.with(mContext).load(thumbnailLocalPath).asBitmap().into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        //需求：ImageView最宽不能超过200dp，最窄不能低于100dp，最高不能超过300dp，最低不能低于150dp
+                        //如果是宽图，将宽度限制，高度根据比例计算
+                        //如果是长图，将高度限制，宽度根据比例计算
+                        int width = resource.getWidth();
+                        int height = resource.getHeight();
+                        int maxWidth = DensityUtil.dip2px(mContext, MAX_WIDTH);
+                        int minWidth = DensityUtil.dip2px(mContext, MIN_WIDTH);
+                        int maxHeight = DensityUtil.dip2px(mContext, MAX_HEIGHT);
+                        int minHeight = DensityUtil.dip2px(mContext, MIN_HEIGHT);
+
+                        int realWidth = width;
+                        int realHeight = height;
+                        if (width / height >= 1) {
+                            //宽图
+                            if (width > maxWidth) {
+                                realWidth = maxWidth;
+                                realHeight = maxWidth * height / width;
+                            } else if (width < minWidth) {
+                                realWidth = minWidth;
+                                realHeight = minWidth * height / width;
+                            }
+                        } else {
+                            //高图
+                            if (height > maxHeight) {
+                                realHeight = maxHeight;
+                                realWidth = maxWidth * height / width;
+                            } else if (height < minHeight) {
+                                realHeight = minHeight;
+                                realWidth = minWidth * height / width;
+                            }
+                        }
+
+                        ViewGroup.LayoutParams layoutParams = holder.mIvImage.getLayoutParams();
+                        layoutParams.width = realWidth;
+                        layoutParams.height = realHeight;
+                        holder.mIvImage.setLayoutParams(layoutParams);
+
+                        Log.d(TAG, "onResourceReady: " + resource);
+                        holder.mIvImage.setImageBitmap(resource);
+                    }
+                });
             }
             //            holder.mIvImage
         } else if (emMessage.direct() == EMMessage.Direct.SEND && emMessage.getType() == EMMessage.Type.IMAGE) {
