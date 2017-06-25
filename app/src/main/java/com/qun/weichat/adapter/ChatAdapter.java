@@ -40,10 +40,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     private static final int SEND_TEXT = 3;
     private static final int SEND_IMAGE = 4;
     private static final int SEND_UNKNOWN = 5;
-    public static final int MAX_WIDTH = 400;
-    public static final int MIN_WIDTH = 200;
-    public static final int MAX_HEIGHT = 500;
-    public static final int MIN_HEIGHT = 250;
+    public static final int MAX_WIDTH = 200;
+    public static final int MIN_WIDTH = 100;
+    public static final int MAX_HEIGHT = 300;
+    public static final int MIN_HEIGHT = 150;
     private List<EMMessage> mEMMessageList;
     private Context mContext;
 
