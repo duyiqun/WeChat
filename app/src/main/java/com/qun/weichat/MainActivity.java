@@ -1,9 +1,11 @@
 package com.qun.weichat;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -23,6 +25,7 @@ import me.majiajie.pagerbottomtabstrip.listener.OnTabItemSelectedListener;
 
 public class MainActivity extends BaseActivity implements OnTabItemSelectedListener {
 
+    private static final String TAG = "MainActivity";
     @BindView(R.id.tv_title)
     TextView mTvTitle;
     @BindView(R.id.toolBar)
@@ -72,7 +75,7 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.add:
                 startActivity(AddFriendActivity.class, false);
                 break;
@@ -89,6 +92,18 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
     }
 
     private void initFragment() {
+        /**
+         * 为了避免Fragment重影问题
+         * 如果当前Activity中已经有Fragment了，就把老的Fragment清除掉
+         */
+        for (int i = 0; i < TITLES.length; i++) {
+            Fragment fragmentByTag = getSupportFragmentManager().findFragmentByTag(i + "");
+            if (fragmentByTag != null) {
+                Log.d(TAG, "initFragments: 发现有老的Fragment" + fragmentByTag);
+                getSupportFragmentManager().beginTransaction().remove(fragmentByTag).commit();
+            }
+        }
+
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fl_content, FragmentFactory.getFragment(0), "0")
                 .commit();
