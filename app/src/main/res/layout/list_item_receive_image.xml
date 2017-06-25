@@ -29,7 +29,7 @@
             android:layout_height="150dp"
             android:background="@drawable/ease_chatfrom_bg_normal"
             android:scaleType="centerCrop"
-            android:src="@mipmap/thinkersmall"/>
+            android:src="@mipmap/pic"/>
 
     </LinearLayout>
 

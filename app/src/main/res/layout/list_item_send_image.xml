@@ -34,7 +34,7 @@
                 android:id="@+id/iv_image"
                 android:layout_width="100dp"
                 android:layout_height="150dp"
-                android:src="@mipmap/thinkersmall"/>
+                android:src="@mipmap/pic"/>
 
             <com.qun.weichat.widget.ImageProgressBar
                 android:id="@+id/ipb_image"
