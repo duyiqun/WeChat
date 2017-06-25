@@ -24,6 +24,7 @@ import com.qun.weichat.R;
 import com.qun.weichat.utils.ToastUtil;
 import com.qun.weichat.widget.ImageProgressBar;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -113,7 +114,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public void onBindViewHolder(final ChatViewHolder holder, int position) {
-        EMMessage emMessage = mEMMessageList.get(position);
+        final EMMessage emMessage = mEMMessageList.get(position);
 
         //显示时间
         long msgTime = emMessage.getMsgTime();
@@ -244,6 +245,27 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                     break;
             }
         }
+
+        if (emMessage.getType() == EMMessage.Type.IMAGE) {
+            holder.mIvImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnImageClickListener != null) {
+
+                        //从当前的集合中，把所有的图片消息，放到一个新的集合
+                        List<EMMessage> imageList = new ArrayList<>();
+                        for (int i = 0; i < mEMMessageList.size(); i++) {
+                            EMMessage message = mEMMessageList.get(i);
+                            if (message.getType() == EMMessage.Type.IMAGE) {
+                                imageList.add(message);
+                            }
+                        }
+                        int position = imageList.indexOf(emMessage);
+                        mOnImageClickListener.onImageClick(imageList, position);
+                    }
+                }
+            });
+        }
     }
 
     private void loadPictureWithGlide(final ChatViewHolder holder, String imagePath) {
@@ -327,5 +349,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             mIvState = (ImageView) itemView.findViewById(R.id.iv_state);
             mIpbImage = (ImageProgressBar) itemView.findViewById(R.id.ipb_image);
         }
+    }
+
+    public interface OnImageClickListener {
+        void onImageClick(List<EMMessage> emMessageList, int position);
+    }
+
+    private OnImageClickListener mOnImageClickListener;
+
+    public void setOnImageClickListener(OnImageClickListener onImageClickListener) {
+        this.mOnImageClickListener = onImageClickListener;
     }
 }

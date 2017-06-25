@@ -3,6 +3,8 @@ package com.qun.weichat.view.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -10,6 +12,8 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,12 +23,16 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.github.chrisbanes.photoview.PhotoView;
+import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.qun.weichat.R;
 import com.qun.weichat.adapter.ChatAdapter;
@@ -44,7 +52,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ChatActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ChatView, KeyboardListenerLinearLayout.OnKeyboardChangedListener {
+public class ChatActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ChatView, KeyboardListenerLinearLayout.OnKeyboardChangedListener, ChatAdapter.OnImageClickListener {
 
     private static final int REQUEST_PIC = 100;
     private static final int REQUEST_CAMERA = 101;
@@ -73,6 +81,8 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
     private ChatAdapter mChatAdapter;
     private KeyboardListenerLinearLayout mKeyboardListenerLinearLayout;
     private File mPhotoFile;
+    private WindowManager mWindowManager;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -358,6 +368,8 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
+
+        mChatAdapter.setOnImageClickListener(this);
     }
 
     @Override
@@ -393,6 +405,67 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
                 int measuredHeight = lastVisibleView.getMeasuredHeight();
                 layoutManager.scrollToPositionWithOffset(lastVisibleItemPosition, -measuredHeight);
             }
+        }
+    }
+
+    @Override
+    public void onImageClick(final List<EMMessage> emMessageList, int position) {
+        mViewPager = new ViewPager(this);
+        mViewPager.setBackgroundColor(Color.BLACK);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mViewPager.setLayoutParams(layoutParams);
+        mViewPager.setAdapter(new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return emMessageList.size();
+            }
+
+            @Override
+            public boolean isViewFromObject(View view, Object object) {
+                return view == object;
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                PhotoView photoView = new PhotoView(ChatActivity.this);
+                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                EMMessage message = emMessageList.get(position);
+                EMImageMessageBody imageMessageBody = (EMImageMessageBody) message.getBody();
+
+                String path = imageMessageBody.getLocalUrl();
+                //如果是发送的使用本地地址，如果是接收的则使用服务器上的原图地址
+                if (message.direct() == EMMessage.Direct.RECEIVE) {
+                    path = imageMessageBody.getRemoteUrl();
+                }
+                Glide.with(ChatActivity.this.getApplicationContext()).load(path).asBitmap().placeholder(R.mipmap.pic).into(photoView);
+                container.addView(photoView, layoutParams);
+                return photoView;
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                container.removeView((View) object);
+            }
+        });
+        mViewPager.setCurrentItem(position);
+
+        mWindowManager = getWindowManager();
+        WindowManager.LayoutParams windowLayoutParams = new WindowManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        windowLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
+        windowLayoutParams.format = PixelFormat.RGBA_8888;
+        windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_FULLSCREEN;
+
+        mWindowManager.addView(mViewPager, windowLayoutParams);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mViewPager != null) {
+            mWindowManager.removeView(mViewPager);
+            mViewPager = null;
+            mWindowManager = null;
+        } else {
+            super.onBackPressed();
         }
     }
 }
