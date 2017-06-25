@@ -3,6 +3,7 @@ package com.qun.weichat.presenter;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
+import com.qun.weichat.adapter.CallBack;
 import com.qun.weichat.view.activity.ChatView;
 
 import java.util.ArrayList;
@@ -93,6 +94,22 @@ public class ChatPresenterImpl implements ChatPresenter {
          */
         EMMessage imageSendMessage = EMMessage.createImageSendMessage(imagePath, true, username);
         mEMMessageList.add(imageSendMessage);
+        imageSendMessage.setMessageStatusCallback(new CallBack() {
+            @Override
+            public void onMainSuccess() {
+
+            }
+
+            @Override
+            public void onMainError(int code, String msg) {
+
+            }
+
+            @Override
+            public void onMainProgress(int code, String msg) {
+
+            }
+        });
         mChatView.onSendMsg(imageSendMessage);
 
         EMClient.getInstance().chatManager().sendMessage(imageSendMessage);
