@@ -21,6 +21,7 @@ import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.DateUtils;
 import com.hyphenate.util.DensityUtil;
 import com.qun.weichat.R;
+import com.qun.weichat.utils.ToastUtil;
 import com.qun.weichat.widget.ImageProgressBar;
 
 import java.util.Date;
@@ -206,33 +207,42 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             emMessage.setMessageStatusCallback(new CallBack() {
                 @Override
                 public void onMainSuccess() {
-
+                    holder.mIpbImage.setVisibility(View.GONE);
+                    Log.d(TAG, "onMainSuccess: ");
+                    ToastUtil.showMsg(mContext, "上传成功");
                 }
 
                 @Override
                 public void onMainError(int code, String msg) {
-
+                    holder.mIpbImage.setProgress(-1);
+                    holder.mIpbImage.setVisibility(View.VISIBLE);
+                    ToastUtil.showMsg(mContext, "上传失败：" + msg);
+                    Log.d(TAG, "onMainError: " + msg);
                 }
 
                 @Override
-                public void onMainProgress(int code, String msg) {
-
+                public void onMainProgress(int progress, String msg) {
+                    holder.mIpbImage.setProgress(progress);
+                    holder.mIpbImage.setVisibility(View.VISIBLE);
+                    Log.d(TAG, "onProgress: " + progress);
                 }
             });
 
             //处理ImageProgressBar
-//            switch (emMessage.status()) {
-//                case CREATE:
-//                case INPROGRESS:
-//                    holder.mImageProgressBar.setVisibility(View.VISIBLE);
-//                case SUCCESS:
-//                    holder.mImageProgressBar.setVisibility(View.GONE);
-//                    break;
-//                case FAIL:
-//                    holder.mImageProgressBar.setVisibility(View.VISIBLE);
-//                    holder.mImageProgressBar.setProgress(-1);
-//                    break;
-//            }
+            switch (emMessage.status()) {
+                case CREATE:
+                case INPROGRESS:
+                    holder.mIpbImage.setVisibility(View.VISIBLE);
+                case SUCCESS:
+                    holder.mIpbImage.setVisibility(View.GONE);
+                    break;
+                case FAIL:
+                    holder.mIpbImage.setProgress(-1);
+                    holder.mIpbImage.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

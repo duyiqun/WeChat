@@ -35,7 +35,7 @@ public class ImageProgressBar extends View {
         mPaint.setTextAlign(Paint.Align.CENTER);
         mPaint.setTextSize(DensityUtil.sp2px(context, 18));
         mPaint.setColor(Color.WHITE);
-        mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.msg_error);
+        mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.image_error);
     }
 
     public ImageProgressBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
