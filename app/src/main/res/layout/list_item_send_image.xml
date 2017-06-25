@@ -24,13 +24,24 @@
             android:layout_margin="5dp"
             android:src="@mipmap/avatar_10"/>
 
-        <ImageView
-            android:id="@+id/iv_image"
-            android:layout_width="200dp"
-            android:layout_height="300dp"
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/iv_avatar"
-            android:background="@drawable/ease_chatto_bg_normal"
-            android:src="@mipmap/thinkersmall"/>
+            android:background="@drawable/ease_chatto_bg_normal">
+
+            <ImageView
+                android:id="@+id/iv_image"
+                android:layout_width="200dp"
+                android:layout_height="300dp"
+                android:src="@mipmap/thinkersmall"/>
+
+            <com.qun.weichat.widget.ImageProgressBar
+                android:id="@+id/ipb_image"
+                android:layout_width="200dp"
+                android:layout_height="300dp"/>
+
+        </FrameLayout>
 
     </RelativeLayout>
 

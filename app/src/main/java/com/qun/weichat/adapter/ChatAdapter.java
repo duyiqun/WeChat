@@ -21,6 +21,7 @@ import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.DateUtils;
 import com.hyphenate.util.DensityUtil;
 import com.qun.weichat.R;
+import com.qun.weichat.widget.ImageProgressBar;
 
 import java.util.Date;
 import java.util.List;
@@ -38,10 +39,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     private static final int SEND_TEXT = 3;
     private static final int SEND_IMAGE = 4;
     private static final int SEND_UNKNOWN = 5;
-    public static final int MAX_WIDTH = 200;
-    public static final int MIN_WIDTH = 100;
-    public static final int MAX_HEIGHT = 300;
-    public static final int MIN_HEIGHT = 150;
+    public static final int MAX_WIDTH = 400;
+    public static final int MIN_WIDTH = 200;
+    public static final int MAX_HEIGHT = 500;
+    public static final int MIN_HEIGHT = 250;
     private List<EMMessage> mEMMessageList;
     private Context mContext;
 
@@ -184,52 +185,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 //                String thumbnailUrl = imageMessageBody.getThumbnailUrl();
                 //缩略图本地地址(显示并不清晰)
                 String thumbnailLocalPath = imageMessageBody.thumbnailLocalPath();
-
                 Log.d(TAG, "onBindViewHolder: thumbnailLocalPath=" + thumbnailLocalPath + "/remoteUrl=" + remoteUrl + "/fileName=" + fileName);
-                Glide.with(mContext).load(thumbnailLocalPath).asBitmap().into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        //需求：ImageView最宽不能超过200dp，最窄不能低于100dp，最高不能超过300dp，最低不能低于150dp
-                        //如果是宽图，将宽度限制，高度根据比例计算
-                        //如果是长图，将高度限制，宽度根据比例计算
-                        int width = resource.getWidth();
-                        int height = resource.getHeight();
-                        int maxWidth = DensityUtil.dip2px(mContext, MAX_WIDTH);
-                        int minWidth = DensityUtil.dip2px(mContext, MIN_WIDTH);
-                        int maxHeight = DensityUtil.dip2px(mContext, MAX_HEIGHT);
-                        int minHeight = DensityUtil.dip2px(mContext, MIN_HEIGHT);
-
-                        int realWidth = width;
-                        int realHeight = height;
-                        if (width / height >= 1) {
-                            //宽图
-                            if (width > maxWidth) {
-                                realWidth = maxWidth;
-                                realHeight = maxWidth * height / width;
-                            } else if (width < minWidth) {
-                                realWidth = minWidth;
-                                realHeight = minWidth * height / width;
-                            }
-                        } else {
-                            //高图
-                            if (height > maxHeight) {
-                                realHeight = maxHeight;
-                                realWidth = maxWidth * height / width;
-                            } else if (height < minHeight) {
-                                realHeight = minHeight;
-                                realWidth = minWidth * height / width;
-                            }
-                        }
-
-                        ViewGroup.LayoutParams layoutParams = holder.mIvImage.getLayoutParams();
-                        layoutParams.width = realWidth;
-                        layoutParams.height = realHeight;
-                        holder.mIvImage.setLayoutParams(layoutParams);
-
-                        Log.d(TAG, "onResourceReady: " + resource);
-                        holder.mIvImage.setImageBitmap(resource);
-                    }
-                });
+                loadPictureWithGlide(holder, thumbnailLocalPath);
             }
             //            holder.mIvImage
         } else if (emMessage.direct() == EMMessage.Direct.SEND && emMessage.getType() == EMMessage.Type.IMAGE) {
@@ -243,9 +200,90 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 //缩略图的地址
                 String thumbnailUrl = imageMessageBody.getThumbnailUrl();
                 Log.d(TAG, "onBindViewHolder: thumbnailUrl=" + thumbnailUrl + "/remoteUrl=" + remoteUrl + "/fileName=" + fileName + "/localUrl=" + localUrl);
-                Glide.with(mContext).load(localUrl).asBitmap().into(holder.mIvImage);
+                loadPictureWithGlide(holder, localUrl);
             }
+            //监听图片发送的状态
+            emMessage.setMessageStatusCallback(new CallBack() {
+                @Override
+                public void onMainSuccess() {
+
+                }
+
+                @Override
+                public void onMainError(int code, String msg) {
+
+                }
+
+                @Override
+                public void onMainProgress(int code, String msg) {
+
+                }
+            });
+
+            //处理ImageProgressBar
+//            switch (emMessage.status()) {
+//                case CREATE:
+//                case INPROGRESS:
+//                    holder.mImageProgressBar.setVisibility(View.VISIBLE);
+//                case SUCCESS:
+//                    holder.mImageProgressBar.setVisibility(View.GONE);
+//                    break;
+//                case FAIL:
+//                    holder.mImageProgressBar.setVisibility(View.VISIBLE);
+//                    holder.mImageProgressBar.setProgress(-1);
+//                    break;
+//            }
         }
+    }
+
+    private void loadPictureWithGlide(final ChatViewHolder holder, String imagePath) {
+        Glide.with(mContext).load(imagePath).asBitmap().into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                //需求：ImageView最宽不能超过200dp，最窄不能低于100dp，最高不能超过300dp，最低不能低于150dp
+                //如果是宽图，将宽度限制，高度根据比例计算
+                //如果是长图，将高度限制，宽度根据比例计算
+                int width = resource.getWidth();
+                int height = resource.getHeight();
+                int maxWidth = DensityUtil.dip2px(mContext, MAX_WIDTH);
+                int minWidth = DensityUtil.dip2px(mContext, MIN_WIDTH);
+                int maxHeight = DensityUtil.dip2px(mContext, MAX_HEIGHT);
+                int minHeight = DensityUtil.dip2px(mContext, MIN_HEIGHT);
+
+                int realWidth = width;
+                int realHeight = height;
+                if (width / height >= 1) {
+                    //宽图
+                    if (width > maxWidth) {
+                        realWidth = maxWidth;
+                        realHeight = maxWidth * height / width;
+                    } else if (width < minWidth) {
+                        realWidth = minWidth;
+                        realHeight = minWidth * height / width;
+                    }
+                } else {
+                    //高图
+                    if (height > maxHeight) {
+                        realHeight = maxHeight;
+                        realWidth = maxWidth * height / width;
+                    } else if (height < minHeight) {
+                        realHeight = minHeight;
+                        realWidth = minWidth * height / width;
+                    }
+                }
+
+                ViewGroup.LayoutParams layoutParams = holder.mIvImage.getLayoutParams();
+                layoutParams.width = realWidth;
+                layoutParams.height = realHeight;
+                holder.mIvImage.setLayoutParams(layoutParams);
+
+                if (holder.mIpbImage != null) {
+                    holder.mIpbImage.setLayoutParams(layoutParams);
+                }
+                Log.d(TAG, "onResourceReady: " + resource);
+                holder.mIvImage.setImageBitmap(resource);
+            }
+        });
     }
 
     private void showFrameAnimation(ImageView imageState) {
@@ -269,6 +307,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         private final TextView mTvMsg;
         private final ImageView mIvImage;
         private final ImageView mIvState;
+        private final ImageProgressBar mIpbImage;
 
         public ChatViewHolder(View itemView) {
             super(itemView);
@@ -276,6 +315,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             mTvMsg = (TextView) itemView.findViewById(R.id.tv_msg);
             mIvImage = (ImageView) itemView.findViewById(R.id.iv_image);
             mIvState = (ImageView) itemView.findViewById(R.id.iv_state);
+            mIpbImage = (ImageProgressBar) itemView.findViewById(R.id.ipb_image);
         }
     }
 }
