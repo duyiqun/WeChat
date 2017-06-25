@@ -1,10 +1,15 @@
 package com.qun.weichat.view.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +37,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,6 +47,8 @@ import butterknife.ButterKnife;
 public class ChatActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ChatView, KeyboardListenerLinearLayout.OnKeyboardChangedListener {
 
     private static final int REQUEST_PIC = 100;
+    private static final int REQUEST_CAMERA = 101;
+    private static final int REQUEST_PERMISSION_CAMERA = 10001;
     private static final String TAG = "ChatActivity";
     @BindView(R.id.tv_title)
     TextView mTvTitle;
@@ -60,9 +69,10 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
     private String mUsername;
     private ChatPresenter mChatPresenter;
     //每页多少条聊天记录
-    private int pageSize = 20;
+    private int mPageSize = 20;
     private ChatAdapter mChatAdapter;
     private KeyboardListenerLinearLayout mKeyboardListenerLinearLayout;
+    private File mPhotoFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +143,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
     //获取历史聊天记录，然后展示到RecyclerView上
     private void initData() {
         mChatPresenter = new ChatPresenterImpl(this);
-        mChatPresenter.init(mUsername, pageSize);
+        mChatPresenter.init(mUsername, mPageSize);
     }
 
     private void checkEditText() {
@@ -170,13 +180,45 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
                 choosePicture();
                 break;
             case R.id.iv_camera:
-
+                takePhoto();
                 break;
             case R.id.btn_send:
                 sendMsg();
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * 调用系统相机拍摄照片
+     */
+    private void takePhoto() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PermissionChecker.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION_CAMERA);
+            return;
+        }
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+        mPhotoFile = new File(directory, new Date().getTime() + "WeiChat.jpg");
+        //file://storage/DCIM/148xxxxxxx.jpg
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mPhotoFile));
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION_CAMERA) {
+            if (grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
+                //被授权了
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, REQUEST_CAMERA);
+            } else {
+                //没有被授权
+                ToastUtil.showMsg(this, "拒绝了照相功能！");
+            }
         }
     }
 
@@ -207,8 +249,61 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
                     sendImageMsg(imagePath);
                 }
                 cursor.close();
+
+//                if (cursor.moveToFirst()) {
+//                    String[] columnNames = cursor.getColumnNames();
+//                    for (String columnName : columnNames) {
+//                        Log.d(TAG, "onActivityResult: " + columnName);
+//                    }
+//                    String _data = cursor.getString(0);
+//                    String _size = cursor.getString(1);
+//                    String disp_name = cursor.getString(2);
+//                    String type = cursor.getString(3);
+//                    String title = cursor.getString(4);
+//                    String date_added = cursor.getString(5);
+//                    String picasa_id = cursor.getString(6);
+//                    String latitude = cursor.getString(7);
+//                    String orientation = cursor.getString(8);
+//                    String width = cursor.getString(9);
+//                    String height = cursor.getString(10);
+//
+//                    Log.d(TAG, "onActivityResult: " + _data);
+//                    Log.d(TAG, "onActivityResult: " + _size);
+//                    Log.d(TAG, "onActivityResult: " + disp_name);
+//                    Log.d(TAG, "onActivityResult: " + type);
+//                    Log.d(TAG, "onActivityResult: " + title);
+//                    Log.d(TAG, "onActivityResult: " + date_added);
+//                    Log.d(TAG, "onActivityResult: " + picasa_id);
+//                    Log.d(TAG, "onActivityResult: " + latitude);
+//                    Log.d(TAG, "onActivityResult: " + orientation);
+//                    Log.d(TAG, "onActivityResult: " + width);
+//                    Log.d(TAG, "onActivityResult: " + height);
+
             } else {
                 ToastUtil.showMsg(this, "没有选择图片");
+            }
+        } else if (requestCode == REQUEST_CAMERA) {
+            if (resultCode == RESULT_OK) {
+//                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+//                ToastUtil.showMsg(this, "" + bitmap);
+//                //storage/DCIM
+//                File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+//                File file = new File(directory, new Date().getTime() + "WeiChat.webp");
+//                FileOutputStream fos = null;
+//                try {
+//                    fos = new FileOutputStream(file);
+//                    bitmap.compress(Bitmap.CompressFormat.WEBP, 100, fos);
+//                    fos.close();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                mChatPresenter.sendImageMsg(file.getAbsolutePath(), mUsername);
+
+                if (mPhotoFile != null) {
+                    mChatPresenter.sendImageMsg(mPhotoFile.getAbsolutePath(), mUsername);
+                }
+            } else {
+                ToastUtil.showMsg(this, "没有照相");
             }
         }
     }
@@ -230,7 +325,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
     @Override
     public void onRefresh() {
         //加载更多的聊天记录
-        mChatPresenter.loadMoreMsg(pageSize);
+        mChatPresenter.loadMoreMsg(mPageSize);
     }
 
     @Override
