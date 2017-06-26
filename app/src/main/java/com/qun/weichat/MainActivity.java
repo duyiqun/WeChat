@@ -1,5 +1,6 @@
 package com.qun.weichat;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -20,6 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.majiajie.pagerbottomtabstrip.NavigationController;
 import me.majiajie.pagerbottomtabstrip.PageBottomTabLayout;
+import me.majiajie.pagerbottomtabstrip.item.NormalItemView;
 import me.majiajie.pagerbottomtabstrip.listener.OnTabItemSelectedListener;
 
 
@@ -33,9 +35,10 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
     @BindView(R.id.fl_content)
     FrameLayout mFlContent;
     @BindView(R.id.tab)
-    PageBottomTabLayout mTab;
+    PageBottomTabLayout mPageBottomTabLayout;
     private NavigationController mNavigationController;
     private static final String[] TITLES = {"消息", "联系人", "动态"};
+    private NormalItemView mConversationTabItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +58,31 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
     }
 
     private void initTab() {
-        mNavigationController = mTab.material()
-                .addItem(R.mipmap.conversation_selected_2, TITLES[0])
-                .addItem(R.mipmap.contact_selected_2, TITLES[1])
-                .addItem(R.mipmap.plugin_selected_2, TITLES[2])
+//        mNavigationController = mPageBottomTabLayout.material()
+//                .addItem(R.mipmap.conversation_selected_2, TITLES[0])
+//                .addItem(R.mipmap.contact_selected_2, TITLES[1])
+//                .addItem(R.mipmap.plugin_selected_2, TITLES[2])
+//                .build();
+
+        mConversationTabItem = new NormalItemView(this);
+        mConversationTabItem.setTextDefaultColor(Color.parseColor("#9c9c9c"));
+        mConversationTabItem.setTextCheckedColor(getResources().getColor(R.color.colorPrimary));
+        mConversationTabItem.initialize(R.mipmap.conversation_selected_2_black, R.mipmap.conversation_selected_2, TITLES[0]);
+        NormalItemView contactTabItem = new NormalItemView(this);
+        contactTabItem.setTextDefaultColor(Color.parseColor("#9c9c9c"));
+        contactTabItem.setTextCheckedColor(getResources().getColor(R.color.colorPrimary));
+        contactTabItem.initialize(R.mipmap.contact_selected_2_black, R.mipmap.contact_selected_2, TITLES[1]);
+        NormalItemView pluginTabItem = new NormalItemView(this);
+        pluginTabItem.setTextDefaultColor(Color.parseColor("#9c9c9c"));
+        pluginTabItem.setTextCheckedColor(getResources().getColor(R.color.colorPrimary));
+        pluginTabItem.initialize(R.mipmap.plugin_selected_2_black, R.mipmap.plugin_selected_2, TITLES[2]);
+
+        mNavigationController = mPageBottomTabLayout.custom()
+                .addItem(mConversationTabItem)
+                .addItem(contactTabItem)
+                .addItem(pluginTabItem)
                 .build();
+
         mNavigationController.addTabItemSelectedListener(this);
     }
 
