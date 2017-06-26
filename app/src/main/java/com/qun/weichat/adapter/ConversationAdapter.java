@@ -37,8 +37,8 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
     }
 
     @Override
-    public void onBindViewHolder(ConversationViewHolder holder, int position) {
-        EMConversation emConversation = mEMConversationList.get(position);
+    public void onBindViewHolder(ConversationViewHolder holder, final int position) {
+        final EMConversation emConversation = mEMConversationList.get(position);
         EMMessage lastMessage = emConversation.getLastMessage();
         //对方是谁
         String userName = lastMessage.getUserName();
@@ -65,6 +65,15 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
         } else {
             holder.mTvMsg.setText("未知消息类型");
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnConversationClickListener != null) {
+                    mOnConversationClickListener.onConversationClick(emConversation, position);
+                }
+            }
+        });
     }
 
     @Override
@@ -86,5 +95,15 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
             mTvTime = (TextView) itemView.findViewById(R.id.tv_time);
             mTvUnread = (TextView) itemView.findViewById(R.id.tv_unread);
         }
+    }
+
+    public interface OnConversationClickListener {
+        void onConversationClick(EMConversation conversation, int position);
+    }
+
+    private OnConversationClickListener mOnConversationClickListener;
+
+    public void setOnConversationClickListener(OnConversationClickListener onConversationClickListener) {
+        this.mOnConversationClickListener = onConversationClickListener;
     }
 }
