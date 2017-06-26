@@ -70,6 +70,13 @@ public class ConversationFragment extends BaseFragment implements ConversationVi
         startActivity(intent);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mConversationPresenter.initConversation();
+    }
+
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(EMMessage emMessage) {
         mConversationPresenter.updateConversation();

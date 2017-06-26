@@ -9,8 +9,6 @@ import com.qun.weichat.view.activity.ChatView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.id.message;
-
 /**
  * Created by Qun on 2017/5/26.
  */
@@ -37,6 +35,8 @@ public class ChatPresenterImpl implements ChatPresenter {
         //注意：如果两个好友不曾聊天过，那么返回的是null
         mConversation = EMClient.getInstance().chatManager().getConversation(username);
         if (mConversation != null) {
+            //将该会话中的消息标记为已读
+            mConversation.markAllMessagesAsRead();
             //最后的一条聊天记录
             EMMessage lastMessage = mConversation.getLastMessage();//1
             //从数据库中获取最近的pageSize条 //19
@@ -62,6 +62,8 @@ public class ChatPresenterImpl implements ChatPresenter {
 
     @Override
     public void receiveMsg(EMMessage emMessage) {
+        //将正在聊天中接收到的消息标记为已读
+        mConversation.markMessageAsRead(emMessage.getMsgId());
         mEMMessageList.add(emMessage);
     }
 

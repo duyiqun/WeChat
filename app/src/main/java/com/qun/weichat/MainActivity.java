@@ -12,10 +12,16 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 import com.qun.weichat.factory.FragmentFactory;
 import com.qun.weichat.view.activity.AddFriendActivity;
 import com.qun.weichat.view.activity.BaseActivity;
 import com.qun.weichat.view.fragment.BaseFragment;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +53,31 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
         ButterKnife.bind(this);
 
         initView();
+        initData();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(EMMessage emMessage) {
+        int unreadMessageCount = EMClient.getInstance().chatManager().getUnreadMessageCount();
+        mConversationTabItem.setMessageNumber(unreadMessageCount);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    private void initData() {
+        int unreadMessageCount = EMClient.getInstance().chatManager().getUnreadMessageCount();
+        mConversationTabItem.setMessageNumber(unreadMessageCount);
     }
 
     private void initView() {
