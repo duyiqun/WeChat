@@ -6,4 +6,5 @@ package com.qun.weichat.presenter;
 
 public interface ConversationPresenter {
     void initConversation();
+    void updateConversation();
 }

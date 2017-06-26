@@ -25,6 +25,17 @@ public class ConversationPresenterImpl implements ConversationPresenter {
 
     @Override
     public void initConversation() {
+        updateData();
+        mConversationView.onInitConversation(mEMConversationList);
+    }
+
+    @Override
+    public void updateConversation() {
+        updateData();
+        mConversationView.onUpdate();
+    }
+
+    private void updateData() {
         Map<String, EMConversation> allConversations = EMClient.getInstance().chatManager().getAllConversations();
         mEMConversationList.clear();
         mEMConversationList.addAll(allConversations.values());
@@ -34,6 +45,5 @@ public class ConversationPresenterImpl implements ConversationPresenter {
                 return (int) (o2.getLastMessage().getMsgTime() - o1.getLastMessage().getMsgTime());
             }
         });
-        mConversationView.onInitConversation(mEMConversationList);
     }
 }

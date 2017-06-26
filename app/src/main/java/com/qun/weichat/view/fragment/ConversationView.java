@@ -10,4 +10,6 @@ import java.util.List;
 
 public interface ConversationView {
     void onInitConversation(List<EMConversation> emConversationList);
+
+    void onUpdate();
 }

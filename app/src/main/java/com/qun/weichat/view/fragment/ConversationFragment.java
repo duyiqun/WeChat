@@ -12,11 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMMessage;
 import com.qun.weichat.R;
 import com.qun.weichat.adapter.ConversationAdapter;
 import com.qun.weichat.presenter.ConversationPresenter;
 import com.qun.weichat.presenter.ConversationPresenterImpl;
 import com.qun.weichat.view.activity.ChatActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -27,6 +32,7 @@ public class ConversationFragment extends BaseFragment implements ConversationVi
 
     private RecyclerView mRecyclerView;
     private ConversationPresenter mConversationPresenter;
+    private ConversationAdapter mConversationAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,14 +46,21 @@ public class ConversationFragment extends BaseFragment implements ConversationVi
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         mConversationPresenter = new ConversationPresenterImpl(this);
         mConversationPresenter.initConversation();
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onInitConversation(List<EMConversation> emConversationList) {
-        ConversationAdapter conversationAdapter = new ConversationAdapter(emConversationList);
+        mConversationAdapter = new ConversationAdapter(emConversationList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(conversationAdapter);
-        conversationAdapter.setOnConversationClickListener(this);
+        mRecyclerView.setAdapter(mConversationAdapter);
+        mConversationAdapter.setOnConversationClickListener(this);
+    }
+
+    @Override
+    public void onUpdate() {
+        mConversationAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -55,5 +68,19 @@ public class ConversationFragment extends BaseFragment implements ConversationVi
         Intent intent = new Intent(getContext(), ChatActivity.class);
         intent.putExtra("username", conversation.getLastMessage().getUserName());
         startActivity(intent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(EMMessage emMessage) {
+        mConversationPresenter.updateConversation();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
+
+        mRecyclerView = null;
+        mConversationAdapter = null;
     }
 }
