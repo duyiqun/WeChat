@@ -32,6 +32,7 @@ import com.qun.weichat.db.DBUtils;
 import com.qun.weichat.event.ContactUpdateEvent;
 import com.qun.weichat.view.activity.ChatActivity;
 import com.qun.weichat.view.activity.LoginActivity;
+import com.squareup.leakcanary.LeakCanary;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -65,6 +66,8 @@ public class WeiChatApplication extends Application {
         initSoundPool();
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         initActivityLifeCycleListener();
+
+        LeakCanary.install(this);
     }
 
     private void initActivityLifeCycleListener() {

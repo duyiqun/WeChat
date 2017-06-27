@@ -68,4 +68,10 @@ public class PluginFragment extends BaseFragment implements PluginView, View.OnC
         MainActivity activity = (MainActivity) getActivity();
         activity.startActivity(LoginActivity.class, true);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mBtnLogout = null;
+    }
 }

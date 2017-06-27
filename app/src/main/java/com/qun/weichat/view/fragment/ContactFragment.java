@@ -57,6 +57,8 @@ public class ContactFragment extends BaseFragment implements ContactView, SwipeR
         super.onDestroyView();
         //取消注册
         EventBus.getDefault().unregister(this);
+        mContactLayout = null;
+        mContactAdapter = null;
     }
 
     /**
