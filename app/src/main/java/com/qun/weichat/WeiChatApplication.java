@@ -14,11 +14,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 
 import com.avos.avoscloud.AVOSCloud;
+import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMContactListener;
+import com.hyphenate.EMError;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
@@ -27,7 +30,9 @@ import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.exceptions.HyphenateException;
 import com.qun.weichat.db.DBUtils;
 import com.qun.weichat.event.ContactUpdateEvent;
+import com.qun.weichat.view.activity.BaseActivity;
 import com.qun.weichat.view.activity.ChatActivity;
+import com.qun.weichat.view.activity.LoginActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -49,7 +54,7 @@ public class WeiChatApplication extends Application {
     private int mYuluSound;
     private NotificationManager mNotificationManager;
     private HashMap<String, Integer> mHashMap = new HashMap();
-    private List<Activity> mBaseActivities = new ArrayList<>();
+    private List<BaseActivity> mBaseActivities = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -59,7 +64,47 @@ public class WeiChatApplication extends Application {
         initDB();
         initSoundPool();
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        initActivityLifeCycleListener();
     }
+
+//    private void initActivityLifeCycleListener() {
+//
+//        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+//
+//            @Override
+//            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+//                addActivity((BaseActivity)activity);
+//            }
+//
+//            @Override
+//            public void onActivityStarted(Activity activity) {
+//            }
+//
+//            @Override
+//            public void onActivityResumed(Activity activity) {
+//            }
+//
+//            @Override
+//            public void onActivityPaused(Activity activity) {
+//
+//            }
+//
+//            @Override
+//            public void onActivityStopped(Activity activity) {
+//
+//            }
+//
+//            @Override
+//            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+//
+//            }
+//
+//            @Override
+//            public void onActivityDestroyed(Activity activity) {
+//                removeActivity((BaseActivity)activity);
+//            }
+//        });
+//    }
 
     private void initSoundPool() {
         mSoundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
@@ -104,6 +149,8 @@ public class WeiChatApplication extends Application {
         initContactListener();
         //添加消息监听
         initMessageListener();
+        //添加连接监听
+        initConnectListener();
     }
 
     private String getAppName(int pID) {
@@ -271,5 +318,48 @@ public class WeiChatApplication extends Application {
         ComponentName topActivity = runningTaskInfo.topActivity;
         //判断这个Activity的包名是否跟我们的包名一致
         return !topActivity.getPackageName().equals(getPackageName());
+    }
+
+    private void initConnectListener() {
+        EMClient.getInstance().addConnectionListener(new EMConnectionListener() {
+            @Override
+            public void onConnected() {
+
+            }
+
+            @Override
+            public void onDisconnected(int error) {
+                switch (error) {
+                    case EMError.USER_LOGIN_ANOTHER_DEVICE:
+                        //先将app内的所有的Activity给清空（finish）
+                        clearAllActivity();
+
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
+
+    public void addActivity(BaseActivity activity) {
+        if (!mBaseActivities.contains(activity)) {
+            mBaseActivities.add(activity);
+        }
+    }
+
+    public void removeActivity(BaseActivity activity) {
+        mBaseActivities.remove(activity);
+    }
+
+    private void clearAllActivity() {
+        for (int i = 0; i < mBaseActivities.size(); i++) {
+            BaseActivity baseActivity = mBaseActivities.get(i);
+            baseActivity.finish();
+        }
+        mBaseActivities.clear();
     }
 }

@@ -97,8 +97,14 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        ToastUtil.showMsg(this, "ChatActivity销毁了");
         EventBus.getDefault().unregister(this);
+        if (mViewPager != null) {
+            mWindowManager.removeViewImmediate(mViewPager);
+            mViewPager = null;
+            mWindowManager = null;
+        }
+        super.onDestroy();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
