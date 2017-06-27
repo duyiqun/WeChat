@@ -30,7 +30,6 @@ import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.exceptions.HyphenateException;
 import com.qun.weichat.db.DBUtils;
 import com.qun.weichat.event.ContactUpdateEvent;
-import com.qun.weichat.view.activity.BaseActivity;
 import com.qun.weichat.view.activity.ChatActivity;
 import com.qun.weichat.view.activity.LoginActivity;
 
@@ -54,7 +53,8 @@ public class WeiChatApplication extends Application {
     private int mYuluSound;
     private NotificationManager mNotificationManager;
     private HashMap<String, Integer> mHashMap = new HashMap();
-    private List<BaseActivity> mBaseActivities = new ArrayList<>();
+    //    private List<BaseActivity> mBaseActivities = new ArrayList<>();
+    private List<Activity> mBaseActivities = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -73,7 +73,7 @@ public class WeiChatApplication extends Application {
 
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-                addActivity((BaseActivity) activity);
+                addActivity(activity);
             }
 
             @Override
@@ -101,7 +101,7 @@ public class WeiChatApplication extends Application {
 
             @Override
             public void onActivityDestroyed(Activity activity) {
-                removeActivity((BaseActivity) activity);
+                removeActivity(activity);
             }
         });
     }
@@ -345,20 +345,38 @@ public class WeiChatApplication extends Application {
         });
     }
 
-    public void addActivity(BaseActivity activity) {
+//    public void addActivity(BaseActivity activity) {
+//        if (!mBaseActivities.contains(activity)) {
+//            mBaseActivities.add(activity);
+//        }
+//    }
+//
+//    public void removeActivity(BaseActivity activity) {
+//        mBaseActivities.remove(activity);
+//    }
+//
+//    private void clearAllActivity() {
+//        for (int i = 0; i < mBaseActivities.size(); i++) {
+//            BaseActivity baseActivity = mBaseActivities.get(i);
+//            baseActivity.finish();
+//        }
+//        mBaseActivities.clear();
+//    }
+
+    public void addActivity(Activity activity) {
         if (!mBaseActivities.contains(activity)) {
             mBaseActivities.add(activity);
         }
     }
 
-    public void removeActivity(BaseActivity activity) {
+    public void removeActivity(Activity activity) {
         mBaseActivities.remove(activity);
     }
 
     private void clearAllActivity() {
         for (int i = 0; i < mBaseActivities.size(); i++) {
-            BaseActivity baseActivity = mBaseActivities.get(i);
-            baseActivity.finish();
+            Activity activity = mBaseActivities.get(i);
+            activity.finish();
         }
         mBaseActivities.clear();
     }
