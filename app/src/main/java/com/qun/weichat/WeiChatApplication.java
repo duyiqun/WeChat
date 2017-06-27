@@ -64,47 +64,47 @@ public class WeiChatApplication extends Application {
         initDB();
         initSoundPool();
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        initActivityLifeCycleListener();
+        initActivityLifeCycleListener();
     }
 
-//    private void initActivityLifeCycleListener() {
-//
-//        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
-//
-//            @Override
-//            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-//                addActivity((BaseActivity)activity);
-//            }
-//
-//            @Override
-//            public void onActivityStarted(Activity activity) {
-//            }
-//
-//            @Override
-//            public void onActivityResumed(Activity activity) {
-//            }
-//
-//            @Override
-//            public void onActivityPaused(Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityStopped(Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityDestroyed(Activity activity) {
-//                removeActivity((BaseActivity)activity);
-//            }
-//        });
-//    }
+    private void initActivityLifeCycleListener() {
+
+        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                addActivity((BaseActivity) activity);
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+                removeActivity((BaseActivity) activity);
+            }
+        });
+    }
 
     private void initSoundPool() {
         mSoundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);

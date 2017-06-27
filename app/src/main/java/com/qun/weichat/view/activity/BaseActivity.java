@@ -21,7 +21,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private SharedPreferences mSharedPreferences;
     private ProgressDialog mProgressDialog;
-    private WeiChatApplication mWeiChatApplication;
+//    private WeiChatApplication mWeiChatApplication;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,14 +30,14 @@ public class BaseActivity extends AppCompatActivity {
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setCancelable(true);
 
-        mWeiChatApplication = (WeiChatApplication) getApplication();
-        mWeiChatApplication.addActivity(this);
+//        mWeiChatApplication = (WeiChatApplication) getApplication();
+//        mWeiChatApplication.addActivity(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mWeiChatApplication.removeActivity(this);
+//        mWeiChatApplication.removeActivity(this);
     }
 
     public void saveUser(String username, String pwd) {
