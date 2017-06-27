@@ -269,7 +269,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     }
 
     private void loadPictureWithGlide(final ChatViewHolder holder, String imagePath) {
-        Glide.with(mContext.getApplicationContext()).load(imagePath).asBitmap().into(new SimpleTarget<Bitmap>() {
+        Glide.with(mContext).load(imagePath).asBitmap().into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 //需求：ImageView最宽不能超过200dp，最窄不能低于100dp，最高不能超过300dp，最低不能低于150dp

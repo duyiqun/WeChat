@@ -443,7 +443,7 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
                 if (message.direct() == EMMessage.Direct.RECEIVE) {
                     path = imageMessageBody.getRemoteUrl();
                 }
-                Glide.with(ChatActivity.this.getApplicationContext()).load(path).asBitmap().placeholder(R.mipmap.pic).into(photoView);
+                Glide.with(ChatActivity.this).load(path).asBitmap().placeholder(R.mipmap.pic).into(photoView);
                 container.addView(photoView, layoutParams);
                 return photoView;
             }
