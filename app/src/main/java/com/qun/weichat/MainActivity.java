@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.hyphenate.chat.EMClient;
@@ -23,8 +22,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import me.majiajie.pagerbottomtabstrip.NavigationController;
 import me.majiajie.pagerbottomtabstrip.PageBottomTabLayout;
 import me.majiajie.pagerbottomtabstrip.item.NormalItemView;
@@ -34,14 +31,9 @@ import me.majiajie.pagerbottomtabstrip.listener.OnTabItemSelectedListener;
 public class MainActivity extends BaseActivity implements OnTabItemSelectedListener {
 
     private static final String TAG = "MainActivity";
-    @BindView(R.id.tv_title)
-    TextView mTvTitle;
-    @BindView(R.id.toolBar)
-    Toolbar mToolBar;
-    @BindView(R.id.fl_content)
-    FrameLayout mFlContent;
-    @BindView(R.id.tab)
-    PageBottomTabLayout mPageBottomTabLayout;
+    private Toolbar mToolBar;
+    private TextView mTvTitle;
+    private PageBottomTabLayout mPageBottomTabLayout;
     private NavigationController mNavigationController;
     private static final String[] TITLES = {"消息", "联系人", "动态"};
     private NormalItemView mConversationTabItem;
@@ -50,7 +42,6 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
 
         initView();
         initData();
@@ -81,6 +72,9 @@ public class MainActivity extends BaseActivity implements OnTabItemSelectedListe
     }
 
     private void initView() {
+        mToolBar = (Toolbar) findViewById(R.id.toolBar);
+        mTvTitle = (TextView) findViewById(R.id.tv_title);
+        mPageBottomTabLayout = (PageBottomTabLayout) findViewById(R.id.tab);
         mToolBar.setTitle("");
         setSupportActionBar(mToolBar);
         initTab();

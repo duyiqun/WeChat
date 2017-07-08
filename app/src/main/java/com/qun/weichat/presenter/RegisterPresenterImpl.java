@@ -6,18 +6,18 @@ import com.avos.avoscloud.SignUpCallback;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.qun.weichat.utils.ThreadUtils;
-import com.qun.weichat.view.activity.RegistView;
+import com.qun.weichat.view.activity.RegisterView;
 
 /**
  * Created by Qun on 2017/5/13.
  */
 
-public class RegistPresenterImpl implements RegistPresenter {
+public class RegisterPresenterImpl implements RegisterPresenter {
 
-    private RegistView mRegistView;
+    private RegisterView mRegisterView;
 
-    public RegistPresenterImpl(RegistView registView) {
-        mRegistView = registView;
+    public RegisterPresenterImpl(RegisterView registerView) {
+        mRegisterView = registerView;
     }
 
     /**
@@ -26,7 +26,7 @@ public class RegistPresenterImpl implements RegistPresenter {
      * 3. 让结果返回给View
      */
     @Override
-    public void regist(final String username, final String pwd) {
+    public void register(final String username, final String pwd) {
         final AVUser user = new AVUser();// 新建 AVUser 对象实例
         user.setUsername(username);// 设置用户名
         user.setPassword(pwd);// 设置密码
@@ -45,7 +45,7 @@ public class RegistPresenterImpl implements RegistPresenter {
                                 ThreadUtils.runOnMainThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mRegistView.onRegist(true, null, username, pwd);
+                                        mRegisterView.onRegister(true, null, username, pwd);
                                     }
                                 });
                             } catch (final HyphenateException e1) {
@@ -61,7 +61,7 @@ public class RegistPresenterImpl implements RegistPresenter {
                                 ThreadUtils.runOnMainThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mRegistView.onRegist(false, e1.getMessage(), username, pwd);
+                                        mRegisterView.onRegister(false, e1.getMessage(), username, pwd);
                                     }
                                 });
                             }
@@ -70,7 +70,7 @@ public class RegistPresenterImpl implements RegistPresenter {
                 } else {
                     // 失败的原因可能有多种，常见的是用户名已经存在。
                     // 将失败的原因告诉View
-                    mRegistView.onRegist(false, e.getMessage(), username, pwd);
+                    mRegisterView.onRegister(false, e.getMessage(), username, pwd);
                 }
             }
         });

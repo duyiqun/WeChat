@@ -21,19 +21,12 @@ import com.qun.weichat.utils.ToastUtil;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class AddFriendActivity extends BaseActivity implements SearchView.OnQueryTextListener, AddFriendView, SearchFriendAdapter.OnAddBtnClickListener {
 
-    @BindView(R.id.tv_title)
-    TextView mTvTitle;
-    @BindView(R.id.toolBar)
-    Toolbar mToolBar;
-    @BindView(R.id.iv_nodata)
-    ImageView mIvNodata;
-    @BindView(R.id.recyclerView)
-    RecyclerView mRecyclerView;
+    private TextView mTvTitle;
+    private Toolbar mToolBar;
+    private ImageView mIvNodata;
+    private RecyclerView mRecyclerView;
     private SearchView mSearchView;
     private AddFriendPresenter mAddFriendPresenter;
 
@@ -41,7 +34,11 @@ public class AddFriendActivity extends BaseActivity implements SearchView.OnQuer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
-        ButterKnife.bind(this);
+
+        mToolBar = (Toolbar) findViewById(R.id.toolBar);
+        mTvTitle = (TextView) findViewById(R.id.tv_title);
+        mIvNodata = (ImageView) findViewById(R.id.iv_nodata);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         mToolBar.setTitle("");
         setSupportActionBar(mToolBar);

@@ -16,7 +16,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.qun.weichat.MainActivity;
 import com.qun.weichat.R;
@@ -24,24 +23,15 @@ import com.qun.weichat.presenter.LoginPresenter;
 import com.qun.weichat.presenter.LoginPresenterImpl;
 import com.qun.weichat.utils.ToastUtil;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class LoginActivity extends BaseActivity implements TextView.OnEditorActionListener, View.OnClickListener, LoginView {
 
     private static final int REQUEST_PERMISSION = 1;
-    @BindView(R.id.et_username)
-    EditText mEtUsername;
-    @BindView(R.id.et_pwd)
-    EditText mEtPwd;
-    @BindView(R.id.til_username)
-    TextInputLayout mTilUsername;
-    @BindView(R.id.til_pwd)
-    TextInputLayout mTilPwd;
-    @BindView(R.id.btn_login)
-    Button mBtnLogin;
-    @BindView(R.id.tv_newuser)
-    TextView mTvNewuser;
+    private EditText mEtUsername;
+    private EditText mEtPwd;
+    private TextInputLayout mTilUsername;
+    private TextInputLayout mTilPwd;
+    private Button mBtnLogin;
+    private TextView mTvNewuser;
 
     LoginPresenter mLoginPresenter;
 
@@ -59,7 +49,13 @@ public class LoginActivity extends BaseActivity implements TextView.OnEditorActi
         }
 
         setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+
+        mEtUsername = (EditText) findViewById(R.id.et_username);
+        mEtPwd = (EditText) findViewById(R.id.et_pwd);
+        mTilUsername = (TextInputLayout) findViewById(R.id.til_username);
+        mTilPwd = (TextInputLayout) findViewById(R.id.til_pwd);
+        mBtnLogin = (Button) findViewById(R.id.btn_login);
+        mTvNewuser = (TextView) findViewById(R.id.tv_newuser);
 
         mEtPwd.setOnEditorActionListener(this);
         mBtnLogin.setOnClickListener(this);
@@ -129,7 +125,7 @@ public class LoginActivity extends BaseActivity implements TextView.OnEditorActi
                 login();
                 break;
             case R.id.tv_newuser:
-                startActivity(RegistActivity.class, false);
+                startActivity(RegisterActivity.class, false);
                 break;
             default:
                 break;

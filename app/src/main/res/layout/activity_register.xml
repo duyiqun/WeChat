@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.qun.weichat.view.activity.RegistActivity">
+    tools:context="com.qun.weichat.view.activity.RegisterActivity">
 
     <ImageView
         android:layout_width="60dp"
@@ -49,7 +49,7 @@
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:id="@+id/btn_regist"
+        android:id="@+id/btn_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"

@@ -49,31 +49,20 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class ChatActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ChatView, KeyboardListenerLinearLayout.OnKeyboardChangedListener, ChatAdapter.OnImageClickListener {
 
     private static final int REQUEST_PIC = 100;
     private static final int REQUEST_CAMERA = 101;
     private static final int REQUEST_PERMISSION_CAMERA = 10001;
     private static final String TAG = "ChatActivity";
-    @BindView(R.id.tv_title)
-    TextView mTvTitle;
-    @BindView(R.id.toolBar)
-    Toolbar mToolBar;
-    @BindView(R.id.recyclerView)
-    RecyclerView mRecyclerView;
-    @BindView(R.id.swipeRefreshLayout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.et_msg)
-    EditText mEtMsg;
-    @BindView(R.id.btn_send)
-    Button mBtnSend;
-    @BindView(R.id.iv_pic)
-    ImageView mIvPic;
-    @BindView(R.id.iv_camera)
-    ImageView mIvCamera;
+    private Toolbar mToolBar;
+    private TextView mTvTitle;
+    private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private EditText mEtMsg;
+    private Button mBtnSend;
+    private ImageView mIvPic;
+    private ImageView mIvCamera;
     private String mUsername;
     private ChatPresenter mChatPresenter;
     //每页多少条聊天记录
@@ -88,7 +77,6 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        ButterKnife.bind(this);
 
         initView();
         initData();
@@ -119,6 +107,14 @@ public class ChatActivity extends AppCompatActivity implements TextWatcher, View
     }
 
     private void initView() {
+        mToolBar = (Toolbar) findViewById(R.id.toolBar);
+        mTvTitle = (TextView) findViewById(R.id.tv_title);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mEtMsg = (EditText) findViewById(R.id.et_msg);
+        mBtnSend = (Button) findViewById(R.id.btn_send);
+        mIvPic = (ImageView) findViewById(R.id.iv_pic);
+        mIvCamera = (ImageView) findViewById(R.id.iv_camera);
         mToolBar.setTitle("");
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
